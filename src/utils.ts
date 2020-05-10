@@ -19,3 +19,13 @@ export function parseQuery(url: string): { [key: string]: string } {
     return acc;
   }, {} as any);
 }
+
+export function parseArg(args: string[], flag: string): string {
+  const flagIndex = args.indexOf(flag);
+
+  if (flagIndex=== -1) {
+    return null
+  }
+
+  return args[flagIndex + 1]
+}
