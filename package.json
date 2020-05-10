@@ -11,9 +11,9 @@
     "parse-import": "SafalPandey/parse-import"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && tsc",
     "watch": "webpack --watch",
-    "start": "yarn build && tsc && node dist/index.js"
+    "start": "yarn build && node dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^13.13.2",
