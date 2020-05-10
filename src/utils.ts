@@ -5,7 +5,7 @@ export function readFile(file: string) {
 }
 
 export function optArg(flag: string, value: string) {
-  return `${value ? flag + value : ''}`;
+  return `${value ? `${flag} ${value}` : ''}`;
 }
 
 export function parseQuery(url: string): { [key: string]: string } {
