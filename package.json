@@ -1,0 +1,27 @@
+{
+  "name": "visualize-import",
+  "version": "0.0.1",
+  "description": "Takes JSON file from `parse-import` and visualizes it.",
+  "main": "index.js",
+  "repository": "git@github.com:SafalPandey/visualize-import.git",
+  "author": "Safal Raj Pandey <safal.pandey.sp@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "open": "^7.0.3",
+    "parse-import": "SafalPandey/parse-import"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "yarn build && tsc && node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@types/webpack": "^4.41.12",
+    "ts-loader": "^7.0.3",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
