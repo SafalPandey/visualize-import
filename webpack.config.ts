@@ -3,7 +3,7 @@ import * as webpack from 'webpack';
 
 const config: webpack.Configuration = {
   mode: 'production',
-  entry: './src/services/visualise.ts',
+  entry: './src/services/visualize.ts',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
