@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "CommonJs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES5",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"]
+}
