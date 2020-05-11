@@ -6,6 +6,24 @@ class Box {
   position: Location;
   dimensions: Dimension;
 
+  static getBoxVertices(box: Box) {
+    return [
+      box.position,
+      {
+        x: box.position.x + box.dimensions.width,
+        y: box.position.y,
+      },
+      {
+        x: box.position.x,
+        y: box.position.y + box.dimensions.height,
+      },
+      {
+        x: box.position.x + box.dimensions.width,
+        y: box.position.y + box.dimensions.height,
+      },
+    ];
+  }
+
   constructor(pos: Location, dim: Dimension) {
     this.position = pos;
     this.dimensions = dim;
