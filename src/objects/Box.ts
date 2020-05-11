@@ -1,9 +1,9 @@
+import Object2D from './Object2D';
 import Location from '../types/Location';
 import Dimension from '../types/Dimension';
 import { ctx } from '../services/visualize';
 
-class Box {
-  position: Location;
+class Box extends Object2D {
   dimensions: Dimension;
 
   static getBoxVertices(box: Box) {
@@ -25,8 +25,9 @@ class Box {
   }
 
   constructor(pos: Location, dim: Dimension) {
-    this.position = pos;
+    super(pos);
     this.dimensions = dim;
+    this.vertices = Box.getBoxVertices(this);
   }
 
   draw() {
