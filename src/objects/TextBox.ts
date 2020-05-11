@@ -44,8 +44,12 @@ class TextBox extends Box {
   }
 
   draw() {
-    super.draw();
+    this.drawBox();
     this.drawText();
+  }
+
+  drawBox() {
+    super.draw();
   }
 
   drawText() {
