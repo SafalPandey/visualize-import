@@ -85,8 +85,8 @@ class Visualizer {
       const importers = modules[module].Info.Importers;
 
       importers.forEach((importer: any) => {
-        moduleMap[importer.Path] &&
-          moduleMap[module] &&
+        moduleMap[module] &&
+          moduleMap[importer.Path] &&
           this.objects.push(new Connector(this.objects[moduleMap[importer.Path]], this.objects[moduleMap[module]]));
       });
     }
