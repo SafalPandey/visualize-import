@@ -30,7 +30,7 @@ export function parseQuery(url: string): { [key: string]: string } {
   return queryArr.reduce((acc, query) => {
     const [key, value] = query.split('=');
 
-    acc[key.replace(/^\S*\?/, '')] = value;
+    acc[key.replace(/^\S*\?/, '')] = decodeURI(value);
 
     return acc;
   }, {} as any);
@@ -39,7 +39,7 @@ export function parseQuery(url: string): { [key: string]: string } {
 export function parseArg(args: string[], flag: string): string {
   const flagIndex = args.indexOf(flag);
 
-  if (flagIndex=== -1) {
+  if (flagIndex === -1) {
     return null
   }
 
