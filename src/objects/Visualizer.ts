@@ -2,7 +2,12 @@ import TextBox from './TextBox';
 import Connector from './Connector';
 import BoxContainer from './BoxContainer';
 import { canvasElement } from '../services/visualize';
-import { CANVAS_WINDOW_MARGIN, BOX_VISUALIZATION_MARGIN_X, BOX_VISUALIZATION_MARGIN_Y } from '../constants';
+import {
+  SERVER_PORT,
+  CANVAS_WINDOW_MARGIN,
+  BOX_VISUALIZATION_MARGIN_X,
+  BOX_VISUALIZATION_MARGIN_Y,
+} from '../constants';
 
 class Visualizer {
   objects: any[];
@@ -35,7 +40,7 @@ class Visualizer {
   }
 
   async visualize(filename: string) {
-    const res = await fetch(`http://localhost:3000?filename=${filename}`);
+    const res = await fetch(`http://localhost:${SERVER_PORT}?filename=${filename}`);
     const response = await res.json();
     const moduleMap: { [key: string]: number } = {};
     const modules = { ...response.imports, ...response.entrypoints };

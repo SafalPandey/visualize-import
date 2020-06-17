@@ -1,8 +1,7 @@
 import http from 'http';
 
+import { SERVER_PORT } from '../constants';
 import { readFile, parseQuery, memoize } from '../utils';
-
-const PORT = 3000;
 
 function createServer() {
   console.log('Creating HTTP server.');
@@ -21,8 +20,8 @@ function createServer() {
     res.end(memoRead(filename));
   });
 
-  return server.listen(PORT, () => {
-    console.log(`Listening on Port: ${PORT}`);
+  return server.listen(SERVER_PORT, () => {
+    console.log(`Listening on Port: ${SERVER_PORT}`);
   });
 }
 
