@@ -1,6 +1,8 @@
 import fs from 'fs';
 
 export function readFile(file: string) {
+  console.log(`Reading file: ${file}`);
+
   return fs.readFileSync(file).toString();
 }
 
