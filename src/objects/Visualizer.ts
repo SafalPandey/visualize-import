@@ -2,6 +2,7 @@ import TextBox from './TextBox';
 import Connector from './Connector';
 import BoxContainer from './BoxContainer';
 import { canvasElement } from '../services/visualize';
+import { CANVAS_WINDOW_MARGIN, BOX_VISUALIZATION_MARGIN_X, BOX_VISUALIZATION_MARGIN_Y } from '../constants';
 
 class Visualizer {
   objects: any[];
@@ -17,17 +18,84 @@ class Visualizer {
     this.buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
     this.buttonElement.onclick = () => this.visualize(this.inputElement.value);
 
-    canvasElement.width = window.innerWidth - 12;
-    canvasElement.height = window.innerHeight - 12;
-    canvasElement.style.display = 'none';
+    canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
+    canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
+
+    this.hideCanvas();
+  }
+
+  hideCanvas() {
+    this.inputSection.style.display = 'block';
+    this.canvasElement.style.display = 'none';
+  }
+
+  showCanvas() {
+    this.inputSection.style.display = 'none';
+    this.canvasElement.style.display = 'block';
   }
 
   async visualize(filename: string) {
-    const res = await fetch(`http://localhost:3000?filename=${filename}&abc=xyz`);
-    const imports = await res.json();
+    const res = await fetch(`http://localhost:3000?filename=${filename}`);
+    const response = await res.json();
+    const moduleMap: { [key: string]: number } = {};
+    const modules = { ...response.imports, ...response.entrypoints };
 
-    this.inputSection.style.display = 'none';
-    canvasElement.style.display = 'block';
+    this.showCanvas();
+
+    this.objects = [];
+
+    let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
+
+    for (const module in modules) {
+      const pathArr = module.split('/');
+      const moduleInfo = modules[module];
+
+      const infoBox = new TextBox(
+        startPos,
+        JSON.stringify({ IsLocal: moduleInfo.IsLocal, IsDir: moduleInfo.Info.IsDir }, null, 4)
+      );
+      const moduleBox = new BoxContainer(infoBox, pathArr[pathArr.length - 1]);
+
+      this.objects.push(infoBox, moduleBox);
+      moduleMap[module] = this.objects.length - 1;
+
+      if (startPos.x + 2 * (moduleBox.dimensions.width + BOX_VISUALIZATION_MARGIN_X) > this.canvasElement.width) {
+        startPos = {
+          x: BOX_VISUALIZATION_MARGIN_X,
+          y: startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y,
+        };
+      } else {
+        startPos = {
+          x: startPos.x + moduleBox.dimensions.width + BOX_VISUALIZATION_MARGIN_X,
+          y: startPos.y,
+        };
+      }
+
+      if (this.canvasElement.height < startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y) {
+        this.growCanvasHeight(startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y);
+      }
+    }
+
+    for (const module in modules) {
+      const importers = modules[module].Info.Importers;
+
+      importers.forEach((importer: any) => {
+        moduleMap[importer.Path] &&
+          moduleMap[module] &&
+          this.objects.push(new Connector(this.objects[moduleMap[importer.Path]], this.objects[moduleMap[module]]));
+      });
+    }
+
+    this.drawObjects();
+  }
+
+  growCanvasHeight(newHeight: number) {
+    this.canvasElement.height = newHeight;
+
+    this.canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
+  }
+
+  testDraw() {
     const box1 = new TextBox({ x: 10, y: 10 }, 'This is a text');
     const box2 = new TextBox({ x: 100, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
     const box3 = new TextBox({ x: 300, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
