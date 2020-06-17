@@ -1,8 +1,12 @@
 import http from 'http';
 
-import { readFile, parseQuery } from '../utils';
+import { SERVER_PORT } from '../constants';
+import { readFile, parseQuery, memoize } from '../utils';
 
 function createServer() {
+  console.log('Creating HTTP server.');
+  const memoRead = memoize(readFile);
+
   const server = http.createServer((req, res) => {
     console.log('Got a request.');
 
@@ -13,10 +17,12 @@ function createServer() {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-    res.end(readFile(filename));
+    res.end(memoRead(filename));
   });
 
-  return server.listen(3000);
+  return server.listen(SERVER_PORT, () => {
+    console.log(`Listening on Port: ${SERVER_PORT}`);
+  });
 }
 
 export default createServer;

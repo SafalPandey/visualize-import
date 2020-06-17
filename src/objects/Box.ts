@@ -33,6 +33,9 @@ class Box extends Object2D {
   draw() {
     ctx.beginPath();
     ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
+    // const rx = this.dimensions.width / 2;
+    // const ry = this.dimensions.height / 2;
+    // ctx.ellipse(this.position.x + rx, this.position.y + ry, rx, ry, 0, 0, Math.PI * 2)
     ctx.stroke();
     ctx.closePath();
   }
