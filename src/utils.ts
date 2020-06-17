@@ -6,6 +6,20 @@ export function readFile(file: string) {
   return fs.readFileSync(file).toString();
 }
 
+export function memoize(func: (...args: any[]) => any) {
+  const retMap = new Map();
+
+  return (...args: any[]) => {
+    const key = `${func.name}-${args.join('-')}`
+
+    if (!retMap.has(key)) {
+      retMap.set(key, func(...args))
+    }
+
+    return retMap.get(key)
+  }
+}
+
 export function optArg(flag: string, value: string) {
   return `${value ? `${flag} ${value}` : ''}`;
 }
