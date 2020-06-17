@@ -2137,8 +2137,8 @@ parse-asn1@^5.0.0, parse-asn1@^5.1.5:
     safe-buffer "^5.1.1"
 
 parse-import@SafalPandey/parse-import:
-  version "0.0.10"
-  resolved "https://codeload.github.com/SafalPandey/parse-import/tar.gz/a751909c7cf43d724272734b2f7f77a80ac3945b"
+  version "0.0.11"
+  resolved "https://codeload.github.com/SafalPandey/parse-import/tar.gz/73853dfdcff31e1b71454cf000fd45f86807cd5c"
   dependencies:
     mkdirp "^0.5.1"
     request "^2.81.0"
