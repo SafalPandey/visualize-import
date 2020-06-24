@@ -41,16 +41,20 @@ class Visualizer {
     this.canvasElement.style.display = 'block';
   }
 
-  async visualize(filename: string) {
+  async fetchData(filename: string) {
     const res = await fetch(`http://localhost:${SERVER_PORT}?filename=${filename}`);
-    const response = await res.json();
-    const moduleMap: { [key: string]: number } = {};
-    const modules = { ...response.imports, ...response.entrypoints };
+
+    return res.json();
+  }
+
+  async visualize(filename: string) {
+    const { entrypoints, imports } = await this.fetchData(filename)
+    const modules = { ...entrypoints, ...imports };
 
     this.showCanvas();
 
     this.objects = [];
-
+    const moduleMap: { [key: string]: number } = {};
     let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
 
     for (const module in modules) {
