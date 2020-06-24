@@ -1,5 +1,7 @@
+import Box from './Box';
 import TextBox from './TextBox';
 import Connector from './Connector';
+import Location from '../types/Location';
 import BoxContainer from './BoxContainer';
 import { canvasElement } from '../services/visualize';
 import {
@@ -92,6 +94,25 @@ class Visualizer {
     }
 
     this.drawObjects();
+  }
+
+  calcNextModuleStartPos(currentStartPos: Location, currentBox: Box) {
+    const nextColumnStartX = currentStartPos.x + currentBox.dimensions.width + BOX_VISUALIZATION_MARGIN_X;
+    const nextRowStartY = currentStartPos.y + currentBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y;
+    const projectedWidthForNextBox = currentBox.dimensions.width;
+
+    if (nextColumnStartX + projectedWidthForNextBox > this.canvasElement.width) {
+      return {
+        x: BOX_VISUALIZATION_MARGIN_X,
+        y: nextRowStartY,
+      };
+    }
+
+    return {
+      x: nextColumnStartX,
+      y: currentStartPos.y,
+    };
+
   }
 
   growCanvasHeight(newHeight: number) {
