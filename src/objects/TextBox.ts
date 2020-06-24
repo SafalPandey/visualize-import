@@ -25,10 +25,10 @@ class TextBox extends Box {
 
   constructor(pos: Location, text: string) {
     const textArr = text.split('\n');
-    const textWidth = TextBox.getMaxWidth(textArr) + 2 * TEXT_HEIGHT;
+    const textWidth = TextBox.getMaxWidth(textArr);
     const textHeight = TEXT_HEIGHT + 1.5 * TEXT_HEIGHT * textArr.length;
     const dimensions = {
-      width: textWidth,
+      width: textWidth + 2 * TEXT_HEIGHT,
       height: textHeight,
     };
 

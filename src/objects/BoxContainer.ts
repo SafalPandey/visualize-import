@@ -50,7 +50,7 @@ class BoxContainer extends TextBox {
     };
     this.vertices = Box.getBoxVertices(this);
     this.textPosition = {
-      x: this.position.x + TEXT_HEIGHT,
+      x: this.position.x + TEXT_HEIGHT * 2,
       y: this.position.y,
     };
   }
