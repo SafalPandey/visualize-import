@@ -66,20 +66,12 @@ class Visualizer {
       this.objects.push(infoBox, moduleBox);
       moduleMap[module] = this.objects.length - 1;
 
-      if (startPos.x + 2 * (moduleBox.dimensions.width + BOX_VISUALIZATION_MARGIN_X) > this.canvasElement.width) {
-        startPos = {
-          x: BOX_VISUALIZATION_MARGIN_X,
-          y: startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y,
-        };
-      } else {
-        startPos = {
-          x: startPos.x + moduleBox.dimensions.width + BOX_VISUALIZATION_MARGIN_X,
-          y: startPos.y,
-        };
-      }
+      // Calculate start position of next module.
+      startPos = this.calcNextModuleStartPos(startPos, moduleBox);
+      const nextRowStartY = startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y;
 
-      if (this.canvasElement.height < startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y) {
-        this.growCanvasHeight(startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y);
+      if (this.canvasElement.height < nextRowStartY) {
+        this.growCanvasHeight(nextRowStartY);
       }
     }
 
