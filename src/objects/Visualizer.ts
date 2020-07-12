@@ -129,6 +129,18 @@ class Visualizer {
 
   }
 
+  handleSearchClick(str: string) {
+    const matchingBox = this.findModule((box) => box.text.includes(str));
+
+    if (!matchingBox) {
+      return
+    }
+
+    scrollTo({ top: matchingBox.textPosition.y });
+    this.redrawBoxes();
+    new Box(matchingBox.position, matchingBox.dimensions, { background: "#ff0" }).draw()
+  }
+
   handleCanvasClickEvent(event: MouseEvent) {
     const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
 
