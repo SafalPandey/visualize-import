@@ -1,8 +1,9 @@
 import Box from './Box';
-import TextBox from './TextBox';
+import ModuleBox from './ModuleBox';
 import Connector from './Connector';
 import Location from '../types/Location';
-import BoxContainer from './BoxContainer';
+import Importer from '../types/Importer';
+import ModuleInfo from '../types/ModuleInfo';
 import { canvasElement } from '../services/visualize';
 import {
   SERVER_PORT,
@@ -12,11 +13,14 @@ import {
 } from '../constants';
 
 class Visualizer {
-  objects: any[];
+  boxes: ModuleBox[];
+  connectors: Connector[];
   inputSection: HTMLElement;
   inputElement: HTMLInputElement;
   buttonElement: HTMLButtonElement;
   canvasElement: HTMLCanvasElement;
+  moduleIdxMap: { [key: string]: number };
+  moduleConnectorsMap: { [key: string]: number[] };
 
   constructor() {
     this.canvasElement = canvasElement;
@@ -25,10 +29,12 @@ class Visualizer {
     this.buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
     this.buttonElement.onclick = () => this.visualize(this.inputElement.value);
 
-    canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
-    canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
-
     this.hideCanvas();
+
+    this.boxes = [];
+    this.connectors = [];
+    this.moduleIdxMap = {};
+    this.moduleConnectorsMap = {};
   }
 
   hideCanvas() {
@@ -37,6 +43,9 @@ class Visualizer {
   }
 
   showCanvas() {
+    canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
+    canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
+
     this.inputSection.style.display = 'none';
     this.canvasElement.style.display = 'block';
   }
@@ -53,22 +62,17 @@ class Visualizer {
 
     this.showCanvas();
 
-    this.objects = [];
-    const moduleMap: { [key: string]: number } = {};
+    this.boxes = [];
+    this.moduleIdxMap = {};
     let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
 
-    for (const module in modules) {
-      const pathArr = module.split('/');
-      const moduleInfo = modules[module];
+    // Create modules
+    for (const modulePath in modules) {
+      const moduleInfo = modules[modulePath];
+      const moduleBox = new ModuleBox(startPos, moduleInfo, !!entrypoints[modulePath]);
 
-      const infoBox = new TextBox(
-        startPos,
-        JSON.stringify({ IsLocal: moduleInfo.IsLocal, IsDir: moduleInfo.Info.IsDir }, null, 4)
-      );
-      const moduleBox = new BoxContainer(infoBox, pathArr[pathArr.length - 1]);
-
-      this.objects.push(infoBox, moduleBox);
-      moduleMap[module] = this.objects.length - 1;
+      this.boxes.push(moduleBox);
+      this.moduleIdxMap[modulePath] = this.boxes.length - 1;
 
       // Calculate start position of next module.
       startPos = this.calcNextModuleStartPos(startPos, moduleBox);
@@ -78,18 +82,30 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
+    this.createConnectors(Object.values(modules));
 
-    for (const module in modules) {
-      const importers = modules[module].Info.Importers;
+    this.drawBoxes();
+  }
 
-      importers.forEach((importer: any) => {
-        moduleMap[module] &&
-          moduleMap[importer.Path] &&
-          this.objects.push(new Connector(this.objects[moduleMap[importer.Path]], this.objects[moduleMap[module]]));
-      });
+  createConnectors(modules: ModuleInfo[]) {
+    // Create connectors
+    for (const module of modules) {
+      const importers = module.Info.Importers;
+      const modulePath = module.Path;
+
+      importers.forEach(({ Path: importerPath }: Importer) => {
+        this.connectors.push(
+          new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
+        );
+        const lastIndex = this.connectors.length - 1;
+
+        if (this.moduleConnectorsMap[importerPath]) {
+          this.moduleConnectorsMap[importerPath].push(lastIndex)
+        } else {
+          this.moduleConnectorsMap[importerPath] = [lastIndex]
+        }
+      })
     }
-
-    this.drawObjects();
   }
 
   calcNextModuleStartPos(currentStartPos: Location, currentBox: Box) {
@@ -117,19 +133,20 @@ class Visualizer {
     this.canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
   }
 
-  testDraw() {
-    const box1 = new TextBox({ x: 10, y: 10 }, 'This is a text');
-    const box2 = new TextBox({ x: 100, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
-    const box3 = new TextBox({ x: 300, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
-    const container = new BoxContainer([box2, box3], 'asdasd');
-    const connector = new Connector(box1, container);
-    this.objects = [box1, box2, box3, container, connector];
-
-    this.drawObjects();
+  drawBoxes() {
+    this.drawObjects(this.boxes);
   }
 
-  drawObjects() {
-    this.objects.forEach((object) => object.draw());
+  drawConnectors(moduleBox: ModuleBox | ModuleBox[]) {
+    const modBoxArr = Array.isArray(moduleBox) ? moduleBox : [moduleBox];
+
+    modBoxArr.forEach(mb => this.moduleConnectorsMap[mb.moduleInfo.Path] &&
+      this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map(idx => this.connectors[idx]))
+    )
+  }
+
+  drawObjects(objects: any[]) {
+    objects.forEach(object => object.draw());
   }
 }
 

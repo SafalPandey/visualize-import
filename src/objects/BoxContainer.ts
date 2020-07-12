@@ -3,6 +3,7 @@ import TextBox from './TextBox';
 import Location from '../types/Location';
 import Dimension from '../types/Dimension';
 import { TEXT_HEIGHT } from '../services/visualize';
+import BoxContainerOptions from '../types/BoxContainerOptions';
 
 class BoxContainer extends TextBox {
   static computeBoxProps(obj: Box | Box[]) {
@@ -34,10 +35,10 @@ class BoxContainer extends TextBox {
     return { position, dimensions };
   }
 
-  constructor(boxes: Box | Box[], text?: string) {
+  constructor(boxes: Box | Box[], text?: string, opts?: BoxContainerOptions) {
     const boxProps = BoxContainer.computeBoxProps(boxes);
 
-    super(boxProps.position, text);
+    super(boxProps.position, text, opts);
     const innerWidth = this.textWidth > boxProps.dimensions.width ? this.textWidth : boxProps.dimensions.width;
 
     this.dimensions = {
