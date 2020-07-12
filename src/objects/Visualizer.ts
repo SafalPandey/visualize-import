@@ -132,8 +132,8 @@ class Visualizer {
     this.drawObjects();
   }
 
-  drawObjects() {
-    this.objects.forEach((object) => object.draw());
+  drawObjects(objects: any[]) {
+    objects.forEach(object => object.draw());
   }
 }
 
