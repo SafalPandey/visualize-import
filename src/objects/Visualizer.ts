@@ -82,18 +82,30 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
+    this.createConnectors(Object.values(modules));
 
-    for (const module in modules) {
-      const importers = modules[module].Info.Importers;
+    this.drawBoxes();
+  }
 
-      importers.forEach((importer: any) => {
-        moduleMap[module] &&
-          moduleMap[importer.Path] &&
-          this.objects.push(new Connector(this.objects[moduleMap[importer.Path]], this.objects[moduleMap[module]]));
-      });
+  createConnectors(modules: ModuleInfo[]) {
+    // Create connectors
+    for (const module of modules) {
+      const importers = module.Info.Importers;
+      const modulePath = module.Path;
+
+      importers.forEach(({ Path: importerPath }: Importer) => {
+        this.connectors.push(
+          new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
+        );
+        const lastIndex = this.connectors.length - 1;
+
+        if (this.moduleConnectorsMap[importerPath]) {
+          this.moduleConnectorsMap[importerPath].push(lastIndex)
+        } else {
+          this.moduleConnectorsMap[importerPath] = [lastIndex]
+        }
+      })
     }
-
-    this.drawObjects();
   }
 
   calcNextModuleStartPos(currentStartPos: Location, currentBox: Box) {
