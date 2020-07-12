@@ -28,3 +28,15 @@ export function computeClosestVertices(thing1: Object2D, thing2: Object2D) {
 export function calcDistance(pos1: Location, pos2: Location) {
   return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
 }
+
+export function rotate(point: Location, center: Location, angle: number): Location {
+  const sine = Math.sin(angle)
+  const cosine = Math.cos(angle);
+  const xDiff = point.x - center.x;
+  const yDiff = point.y - center.y;
+
+  return {
+    x: xDiff * cosine - yDiff * sine + center.x,
+    y: xDiff * sine + yDiff * cosine + center.y
+  }
+}
