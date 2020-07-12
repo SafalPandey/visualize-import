@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.round-box {
+  border-radius: 0.5em;
+  border: 1px solid black;
+}
+
+#input-section {
+  padding: 2em;
+  max-width: 50vw;
+  max-height: 50vh;
+  margin: 25vh 25vw;
+  background-color: paleturquoise;
+}
+
+h1 {
+  font-size: 3em;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(90deg, #0400ff, #009f08);
+  background-clip: text;
+}
+
+#input-section hr {
+  opacity: 0.7;
+  margin: 1em auto;
+}
+
+#input-section input {
+  padding: 0 0 0 0.5em;
+}
+
+#input-section button {
+  display: block;
+  margin: 1.5em auto;
+  padding: 0.5em;
+  background-color: mediumspringgreen;
+}
