@@ -10,6 +10,7 @@
 
 #input-section {
   padding: 2em;
+  min-width: 15em;
   max-width: 50vw;
   max-height: 50vh;
   margin: 25vh 25vw;
@@ -18,9 +19,6 @@
 
 h1 {
   font-size: 3em;
-  -webkit-text-fill-color: transparent;
-  background: linear-gradient(90deg, #0400ff, #009f08);
-  background-clip: text;
 }
 
 #input-section hr {
@@ -37,4 +35,35 @@ h1 {
   margin: 1.5em auto;
   padding: 0.5em;
   background-color: mediumspringgreen;
+}
+
+.top-nav {
+  height: 3em;
+  width: 100%;
+  background-color: paleturquoise;
+  line-height: 3em;
+  position: fixed;
+  overflow: auto;;
+}
+
+.top-nav h2 {
+  float: left;
+  margin-left: 2em;
+}
+
+#visualize-section input {
+  padding: 0 0 0 0.5em;
+}
+
+#search-form {
+  margin-right: 2em;
+  float: right;
+}
+
+.top-nav button{
+  padding: 0.25em;
+}
+
+canvas {
+  margin-top: 3em;
 }

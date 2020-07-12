@@ -16,7 +16,16 @@
     <input id="filename-input" class="round-box" name="fname" type="text" value="./imports.json" />
     <button id="visualize-button" class="round-box">Visualize</button>
   </div>
-  <canvas id="canvas" style="margin:5px; border: 1px solid black;"></canvas>
+  <div id="visualize-section" align="center">
+    <div class="top-nav">
+      <h2>Visualize</h2>
+      <div id="search-form">
+        <input id="search-input" class="round-box" placeholder="Search here" value=""></input>
+        <button id="search-button" class="round-box">Search</button>
+      </div>
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
 </body>
 <script src="dist/main.js"></script>
 
