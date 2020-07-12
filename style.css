@@ -10,6 +10,7 @@
 
 #input-section {
   padding: 2em;
+  min-width: 15em;
   max-width: 50vw;
   max-height: 50vh;
   margin: 25vh 25vw;
@@ -18,9 +19,6 @@
 
 h1 {
   font-size: 3em;
-  -webkit-text-fill-color: transparent;
-  background: linear-gradient(90deg, #0400ff, #009f08);
-  background-clip: text;
 }
 
 #input-section hr {
