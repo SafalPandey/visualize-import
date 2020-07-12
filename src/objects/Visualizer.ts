@@ -141,11 +141,7 @@ class Visualizer {
   }
 
   getClickedBox(clickX: number, clickY: number) {
-    for (const box of this.boxes) {
-      if (box.contains(clickX, clickY)) {
-        return box;
-      }
-    }
+    return this.findModule((box) => box.contains(clickX, clickY));
   }
 
   growCanvasHeight(newHeight: number) {
