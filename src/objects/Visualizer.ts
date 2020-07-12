@@ -16,8 +16,7 @@ class Visualizer {
   boxes: ModuleBox[];
   connectors: Connector[];
   inputSection: HTMLElement;
-  inputElement: HTMLInputElement;
-  buttonElement: HTMLButtonElement;
+  visualizeSection: HTMLElement;
   canvasElement: HTMLCanvasElement;
   moduleIdxMap: { [key: string]: number };
   moduleConnectorsMap: { [key: string]: number[] };
@@ -25,11 +24,16 @@ class Visualizer {
   constructor() {
     this.canvasElement = canvasElement;
     this.canvasElement.onclick = (event) => this.handleCanvasClickEvent(event);
-
     this.inputSection = document.getElementById('input-section') as HTMLElement;
-    this.inputElement = document.getElementById('filename-input') as HTMLInputElement;
-    this.buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
-    this.buttonElement.onclick = () => this.visualize(this.inputElement.value);
+    this.visualizeSection = document.getElementById('visualize-section') as HTMLElement;
+
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchButton = document.getElementById('search-button') as HTMLButtonElement;
+    searchButton.onclick = () => this.handleSearchClick(searchInput.value);
+
+    const inputElement = document.getElementById('filename-input') as HTMLInputElement;
+    const buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
+    buttonElement.onclick = () => this.visualize(inputElement.value);
 
     this.hideCanvas();
 
@@ -41,7 +45,7 @@ class Visualizer {
 
   hideCanvas() {
     this.inputSection.style.display = 'block';
-    this.canvasElement.style.display = 'none';
+    this.visualizeSection.style.display = 'none';
   }
 
   showCanvas() {
@@ -49,7 +53,7 @@ class Visualizer {
     canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
 
     this.inputSection.style.display = 'none';
-    this.canvasElement.style.display = 'block';
+    this.visualizeSection.style.display = 'block';
   }
 
   async fetchData(filename: string) {
