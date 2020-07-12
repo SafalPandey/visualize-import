@@ -136,8 +136,7 @@ class Visualizer {
       return
     }
 
-    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
-    this.drawBoxes();
+    this.redrawBoxes()
     this.drawConnectors(clickedBox);
   }
 
@@ -157,6 +156,11 @@ class Visualizer {
 
   drawBoxes() {
     this.drawObjects(this.boxes);
+  }
+
+  redrawBoxes() {
+    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    this.drawBoxes();
   }
 
   drawConnectors(moduleBox: ModuleBox | ModuleBox[]) {
