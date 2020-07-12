@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1080, initial-scale=1.0" />
-    <title>Visualize Imports</title>
-  </head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-  <body>
-    <div id="input-section">
-      <label for="fname">Imports filename</label>
-      <input id="filename-input" name="fname" type="text" value="./imports.json" />
-      <button id="visualize-button">Visualize</button>
-    </div>
-    <canvas id="canvas" style="margin:5px; border: 1px solid black;"></canvas>
-  </body>
-  <script src="dist/main.js"></script>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Visualize Imports</title>
+</head>
+
+<body>
+  <div id="input-section" align="center" class="round-box">
+    <h1>Visualize</h1>
+    <hr />
+    <label for="fname">Imports filename</label>
+    <input id="filename-input" class="round-box" name="fname" type="text" value="./imports.json" />
+    <button id="visualize-button" class="round-box">Visualize</button>
+  </div>
+  <canvas id="canvas" style="margin:5px; border: 1px solid black;"></canvas>
+</body>
+<script src="dist/main.js"></script>
+
 </html>
