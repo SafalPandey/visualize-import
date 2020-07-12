@@ -174,6 +174,27 @@ class Visualizer {
   drawObjects(objects: any[]) {
     objects.forEach(object => object.draw());
   }
+
+  findModule(predicate: (box: ModuleBox) => boolean) {
+    for (const box of this.boxes) {
+      if (predicate(box)) {
+        return box
+      }
+    }
+  }
+
+  findAllModules(predicate: (box: ModuleBox) => boolean) {
+    const modules: ModuleBox[] = [];
+
+    for (const box of this.boxes) {
+      if (predicate(box)) {
+        modules.push(box)
+      }
+    }
+
+    return modules
+  }
+
 }
 
 export default Visualizer;
