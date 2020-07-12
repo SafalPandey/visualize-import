@@ -2,8 +2,10 @@ import Object2D from './Object2D';
 import Location from '../types/Location';
 import Dimension from '../types/Dimension';
 import { ctx } from '../services/visualize';
+import BoxOptions from '../types/BoxOptions';
 
 class Box extends Object2D {
+  background?: string;
   dimensions: Dimension;
 
   static getBoxVertices(box: Box) {
@@ -24,10 +26,14 @@ class Box extends Object2D {
     ];
   }
 
-  constructor(pos: Location, dim: Dimension) {
+  constructor(pos: Location, dim: Dimension, opts?: BoxOptions) {
     super(pos);
     this.dimensions = dim;
     this.vertices = Box.getBoxVertices(this);
+
+    if (opts) {
+      this.background = opts.background;
+    }
   }
 
   draw() {
@@ -37,6 +43,15 @@ class Box extends Object2D {
     // const ry = this.dimensions.height / 2;
     // ctx.ellipse(this.position.x + rx, this.position.y + ry, rx, ry, 0, 0, Math.PI * 2)
     ctx.stroke();
+
+    if (this.background) {
+      ctx.save()
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = this.background;
+      ctx.fill();
+      ctx.restore();
+    }
+
     ctx.closePath();
   }
 }
