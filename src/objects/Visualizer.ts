@@ -1,8 +1,9 @@
 import Box from './Box';
-import TextBox from './TextBox';
+import ModuleBox from './ModuleBox';
 import Connector from './Connector';
 import Location from '../types/Location';
-import BoxContainer from './BoxContainer';
+import Importer from '../types/Importer';
+import ModuleInfo from '../types/ModuleInfo';
 import { canvasElement } from '../services/visualize';
 import {
   SERVER_PORT,
@@ -12,11 +13,14 @@ import {
 } from '../constants';
 
 class Visualizer {
-  objects: any[];
+  boxes: ModuleBox[];
+  connectors: Connector[];
   inputSection: HTMLElement;
   inputElement: HTMLInputElement;
   buttonElement: HTMLButtonElement;
   canvasElement: HTMLCanvasElement;
+  moduleIdxMap: { [key: string]: number };
+  moduleConnectorsMap: { [key: string]: number[] };
 
   constructor() {
     this.canvasElement = canvasElement;
@@ -24,9 +28,6 @@ class Visualizer {
     this.inputElement = document.getElementById('filename-input') as HTMLInputElement;
     this.buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
     this.buttonElement.onclick = () => this.visualize(this.inputElement.value);
-
-    canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
-    canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
 
     this.hideCanvas();
   }
@@ -37,6 +38,9 @@ class Visualizer {
   }
 
   showCanvas() {
+    canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
+    canvasElement.height = window.innerHeight - CANVAS_WINDOW_MARGIN;
+
     this.inputSection.style.display = 'none';
     this.canvasElement.style.display = 'block';
   }
@@ -53,22 +57,17 @@ class Visualizer {
 
     this.showCanvas();
 
-    this.objects = [];
-    const moduleMap: { [key: string]: number } = {};
+    this.boxes = [];
+    this.moduleIdxMap = {};
     let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
 
-    for (const module in modules) {
-      const pathArr = module.split('/');
-      const moduleInfo = modules[module];
+    // Create modules
+    for (const modulePath in modules) {
+      const moduleInfo = modules[modulePath];
+      const moduleBox = new ModuleBox(startPos, moduleInfo, !!entrypoints[modulePath]);
 
-      const infoBox = new TextBox(
-        startPos,
-        JSON.stringify({ IsLocal: moduleInfo.IsLocal, IsDir: moduleInfo.Info.IsDir }, null, 4)
-      );
-      const moduleBox = new BoxContainer(infoBox, pathArr[pathArr.length - 1]);
-
-      this.objects.push(infoBox, moduleBox);
-      moduleMap[module] = this.objects.length - 1;
+      this.boxes.push(moduleBox);
+      this.moduleIdxMap[modulePath] = this.boxes.length - 1;
 
       // Calculate start position of next module.
       startPos = this.calcNextModuleStartPos(startPos, moduleBox);
