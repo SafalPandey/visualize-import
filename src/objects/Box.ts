@@ -36,6 +36,11 @@ class Box extends Object2D {
     }
   }
 
+  contains(x: number, y: number): boolean {
+    return x > this.position.x && x < this.position.x + this.dimensions.width
+      && y > this.position.y && y < this.position.y + this.dimensions.height
+  }
+
   draw() {
     ctx.beginPath();
     ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
