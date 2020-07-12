@@ -121,15 +121,16 @@ class Visualizer {
     this.canvasElement.width = window.innerWidth - CANVAS_WINDOW_MARGIN;
   }
 
-  testDraw() {
-    const box1 = new TextBox({ x: 10, y: 10 }, 'This is a text');
-    const box2 = new TextBox({ x: 100, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
-    const box3 = new TextBox({ x: 300, y: 100 }, 'This is another\n\n\n\nasdasdasdasdasdasdasdasdas\ntext');
-    const container = new BoxContainer([box2, box3], 'asdasd');
-    const connector = new Connector(box1, container);
-    this.objects = [box1, box2, box3, container, connector];
+  drawBoxes() {
+    this.drawObjects(this.boxes);
+  }
 
-    this.drawObjects();
+  drawConnectors(moduleBox: ModuleBox | ModuleBox[]) {
+    const modBoxArr = Array.isArray(moduleBox) ? moduleBox : [moduleBox];
+
+    modBoxArr.forEach(mb => this.moduleConnectorsMap[mb.moduleInfo.Path] &&
+      this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map(idx => this.connectors[idx]))
+    )
   }
 
   drawObjects(objects: any[]) {
