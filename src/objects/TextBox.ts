@@ -1,6 +1,7 @@
 import Box from './Box';
 import Location from '../types/Location';
 import { ctx, TEXT_HEIGHT } from '../services/visualize';
+import BoxOptions from '../types/BoxOptions';
 
 class TextBox extends Box {
   text: string;
@@ -23,7 +24,7 @@ class TextBox extends Box {
     return maxWidth;
   }
 
-  constructor(pos: Location, text: string) {
+  constructor(pos: Location, text: string, opts?: BoxOptions) {
     const textArr = text.split('\n');
     const textWidth = TextBox.getMaxWidth(textArr);
     const textHeight = TEXT_HEIGHT + 1.5 * TEXT_HEIGHT * textArr.length;
@@ -32,7 +33,7 @@ class TextBox extends Box {
       height: textHeight,
     };
 
-    super(pos, dimensions);
+    super(pos, dimensions, opts);
     this.text = text;
     this.textArr = textArr;
     this.textWidth = textWidth;
