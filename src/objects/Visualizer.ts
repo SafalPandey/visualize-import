@@ -30,6 +30,11 @@ class Visualizer {
     this.buttonElement.onclick = () => this.visualize(this.inputElement.value);
 
     this.hideCanvas();
+
+    this.boxes = [];
+    this.connectors = [];
+    this.moduleIdxMap = {};
+    this.moduleConnectorsMap = {};
   }
 
   hideCanvas() {
