@@ -2,8 +2,8 @@ import Box from './Box';
 import TextBox from './TextBox';
 import Location from '../types/Location';
 import Dimension from '../types/Dimension';
+import BoxOptions from '../types/BoxOptions';
 import { TEXT_HEIGHT } from '../services/visualize';
-import BoxContainerOptions from '../types/BoxContainerOptions';
 
 class BoxContainer extends TextBox {
   static computeBoxProps(obj: Box | Box[]) {
@@ -35,7 +35,7 @@ class BoxContainer extends TextBox {
     return { position, dimensions };
   }
 
-  constructor(boxes: Box | Box[], text?: string, opts?: BoxContainerOptions) {
+  constructor(boxes: Box | Box[], text?: string, opts?: BoxOptions) {
     const boxProps = BoxContainer.computeBoxProps(boxes);
 
     super(boxProps.position, text, opts);

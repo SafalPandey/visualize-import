@@ -152,6 +152,8 @@ class Visualizer {
       return
     }
 
+    clickedBox.setOptions({ showContent: true });
+    this.boxes.forEach(box => box !== clickedBox && box.setOptions({ showContent: false }))
     this.redrawBoxes()
     this.drawConnectors(clickedBox);
   }
