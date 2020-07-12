@@ -4,7 +4,7 @@ import Connector from './Connector';
 import Location from '../types/Location';
 import Importer from '../types/Importer';
 import ModuleInfo from '../types/ModuleInfo';
-import { canvasElement } from '../services/visualize';
+import { canvasElement, ctx } from '../services/visualize';
 import {
   SERVER_PORT,
   CANVAS_WINDOW_MARGIN,
@@ -24,6 +24,8 @@ class Visualizer {
 
   constructor() {
     this.canvasElement = canvasElement;
+    this.canvasElement.onclick = (event) => this.handleCanvasClickEvent(event);
+
     this.inputSection = document.getElementById('input-section') as HTMLElement;
     this.inputElement = document.getElementById('filename-input') as HTMLInputElement;
     this.buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
@@ -125,6 +127,26 @@ class Visualizer {
       y: currentStartPos.y,
     };
 
+  }
+
+  handleCanvasClickEvent(event: MouseEvent) {
+    const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
+
+    if (!clickedBox) {
+      return
+    }
+
+    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    this.drawBoxes();
+    this.drawConnectors(clickedBox);
+  }
+
+  getClickedBox(clickX: number, clickY: number) {
+    for (const box of this.boxes) {
+      if (box.contains(clickX, clickY)) {
+        return box;
+      }
+    }
   }
 
   growCanvasHeight(newHeight: number) {
