@@ -43,7 +43,8 @@ h1 {
   background-color: paleturquoise;
   line-height: 3em;
   position: fixed;
-  overflow: auto;;
+  overflow: auto;
+  z-index: 99;
 }
 
 .top-nav h2 {
@@ -60,10 +61,57 @@ h1 {
   float: right;
 }
 
-.top-nav button{
+.top-nav button {
   padding: 0.25em;
 }
 
 canvas {
   margin-top: 3em;
+}
+
+#tools-section {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 25em;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-wrap: break-word;
+  background-color: #f3f3f3;
+  padding: 4em 1em;
+  border-left: solid #e3e3e3 1px;
+  box-sizing: border-box;
+}
+
+.slide-in {
+  animation: slide-in 0.25s linear 0s 1;
+}
+
+#tools-section details {
+  line-height: 2em;
+  border: solid #c3c3c3 1px;
+}
+
+#tools-section ul {
+  list-style: none;
+}
+
+#tools-collapse {
+  padding: 0.5em;
+  position: fixed;
+  top: 50vh;
+  right: -0.5em;
+  z-index: 99;
+  background-color: #f3f3f3;
+  border: solid #c3c3c3 1px;
+  border-radius: 0.5em;
+}
+
+@keyframes slide-in {
+  0% {
+    right: -25em;
+  }
+  100% {
+    right: 0
+  }
 }
