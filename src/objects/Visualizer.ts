@@ -165,12 +165,18 @@ class Visualizer {
       return;
     }
 
+    const searchResults: HTMLElement[] = [];
+
     for (let matchingBox of matchingBoxes) {
       const listItem = document.createElement('LI');
+      searchResults.push(listItem);
 
       listItem.innerText = matchingBox.text;
 
       listItem.onclick = () => {
+        searchResults.forEach((result) => (result.className = ''));
+
+        listItem.className = 'active';
         scrollTo({ top: matchingBox.textPosition.y });
         this.redrawBoxes();
         new Box(matchingBox.position, matchingBox.dimensions, { background: '#ff0' }).draw();
