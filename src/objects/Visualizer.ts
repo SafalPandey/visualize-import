@@ -40,7 +40,7 @@ class Visualizer {
     this.toolsCollapse = document.getElementById('tools-collapse') as HTMLUListElement;
     this.toolsCollapse.onclick = () => this.handleToolCollapseClick();
     this.isToolsSectionActive = false;
-    this.visualizeSection.removeChild(this.toolsSection);
+    this.toolsSection.style.display = 'none';
 
     const inputElement = document.getElementById('filename-input') as HTMLInputElement;
     const buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
@@ -148,11 +148,13 @@ class Visualizer {
 
     if (this.isToolsSectionActive) {
       this.toolsCollapse.innerHTML = '>';
-      return this.visualizeSection.appendChild(this.toolsSection);
+      this.toolsSection.style.display = 'block';
+
+      return;
     }
 
     this.toolsCollapse.innerHTML = '<';
-    this.visualizeSection.removeChild(this.toolsSection);
+    this.toolsSection.style.display = 'none';
   }
 
   handleSearchClick(str: string) {
