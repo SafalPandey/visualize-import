@@ -133,7 +133,7 @@ class Visualizer {
   }
 
   handleSearchClick(str: string) {
-    const matchingBox = this.findModule((box) => box.text.includes(str));
+    const matchingBox = this.findModule((box) => box.text.toLowerCase().includes(str.toLowerCase()));
 
     if (!matchingBox) {
       return;
