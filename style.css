@@ -96,15 +96,30 @@ canvas {
   list-style: none;
 }
 
+#tools-section li {
+  line-height: 2em;
+  padding-left: 0.75em;
+  background-color: #f3f3f3;
+}
+
+#tools-section li:hover {
+  background-color: #fff;
+}
+
+#tools-section .active {
+  border: solid 1px #e3e3e3;
+  background-color: mediumspringgreen;
+}
+
 #tools-collapse {
+  z-index: 99;
   padding: 0.5em;
   position: fixed;
   top: 50vh;
   right: -0.5em;
-  z-index: 99;
+  border-radius: 0.5em;
   background-color: #f3f3f3;
   border: solid #c3c3c3 1px;
-  border-radius: 0.5em;
 }
 
 @keyframes slide-in {
