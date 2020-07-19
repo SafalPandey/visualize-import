@@ -16,7 +16,11 @@ class Visualizer {
   boxes: ModuleBox[];
   connectors: Connector[];
   inputSection: HTMLElement;
+  toolsSection: HTMLElement;
+  toolsCollapse: HTMLElement;
+  isToolsSectionActive: boolean;
   visualizeSection: HTMLElement;
+  searchResults: HTMLUListElement;
   canvasElement: HTMLCanvasElement;
   moduleIdxMap: { [key: string]: number };
   moduleConnectorsMap: { [key: string]: number[] };
@@ -28,8 +32,17 @@ class Visualizer {
     this.visualizeSection = document.getElementById('visualize-section') as HTMLElement;
 
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    this.searchResults = document.getElementById('search-results') as HTMLUListElement;
     const searchButton = document.getElementById('search-button') as HTMLButtonElement;
     searchButton.onclick = () => this.handleSearchClick(searchInput.value);
+
+    this.toolsSection = document.getElementById('tools-section') as HTMLUListElement;
+    this.toolsCollapse = document.getElementById('tools-collapse') as HTMLUListElement;
+    this.isToolsSectionActive = false;
+    this.toolsCollapse.innerHTML = '<';
+    this.visualizeSection.removeChild(this.toolsSection);
+
+    this.toolsCollapse.onclick = () => this.handleToolCollapseClick();
 
     const inputElement = document.getElementById('filename-input') as HTMLInputElement;
     const buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
@@ -130,6 +143,18 @@ class Visualizer {
       x: nextColumnStartX,
       y: currentStartPos.y,
     };
+  }
+
+  handleToolCollapseClick() {
+    this.isToolsSectionActive = !this.isToolsSectionActive;
+
+    if (this.isToolsSectionActive) {
+      this.toolsCollapse.innerHTML = '>';
+      return this.visualizeSection.appendChild(this.toolsSection);
+    }
+
+    this.toolsCollapse.innerHTML = '<';
+    this.visualizeSection.removeChild(this.toolsSection);
   }
 
   handleSearchClick(str: string) {
