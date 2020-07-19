@@ -158,15 +158,30 @@ class Visualizer {
   }
 
   handleSearchClick(str: string) {
-    const matchingBox = this.findModule((box) => box.text.toLowerCase().includes(str.toLowerCase()));
+    const matchingBoxes = this.findAllModules((box) => box.text.toLowerCase().includes(str.toLowerCase()));
+    this.searchResults.innerHTML = '';
 
-    if (!matchingBox) {
+    if (!matchingBoxes.length) {
       return;
     }
 
-    scrollTo({ top: matchingBox.textPosition.y });
-    this.redrawBoxes();
-    new Box(matchingBox.position, matchingBox.dimensions, { background: '#ff0' }).draw();
+    for (let matchingBox of matchingBoxes) {
+      const listItem = document.createElement('LI');
+
+      listItem.innerText = matchingBox.text;
+
+      listItem.onclick = () => {
+        scrollTo({ top: matchingBox.textPosition.y });
+        this.redrawBoxes();
+        new Box(matchingBox.position, matchingBox.dimensions, { background: '#ff0' }).draw();
+      };
+
+      this.searchResults.appendChild(listItem);
+    }
+
+    if (!this.isToolsSectionActive) {
+      this.toolsCollapse.click();
+    }
   }
 
   handleCanvasClickEvent(event: MouseEvent) {
