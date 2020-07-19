@@ -18,6 +18,7 @@ class Visualizer {
   inputSection: HTMLElement;
   toolsSection: HTMLElement;
   toolsCollapse: HTMLElement;
+  detailSection: HTMLElement;
   isToolsSectionActive: boolean;
   visualizeSection: HTMLElement;
   searchResults: HTMLUListElement;
@@ -30,6 +31,7 @@ class Visualizer {
     this.canvasElement.onclick = (event) => this.handleCanvasClickEvent(event);
     this.inputSection = document.getElementById('input-section') as HTMLElement;
     this.visualizeSection = document.getElementById('visualize-section') as HTMLElement;
+    this.detailSection = document.getElementById('details') as HTMLElement;
 
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
     this.searchResults = document.getElementById('search-results') as HTMLUListElement;
@@ -199,6 +201,11 @@ class Visualizer {
 
     this.redrawBoxes();
     this.drawConnectors(clickedBox);
+    this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
+      .replace(/ /g, '&nbsp;')
+      .split('\n')
+      .map((line) => `<li>${line}</li>`)
+      .join('');
   }
 
   getClickedBox(clickX: number, clickY: number) {
