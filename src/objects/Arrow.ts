@@ -12,7 +12,7 @@ class Arrow {
     point1: Location;
     point2: Location;
     point3: Location;
-  }
+  };
 
   constructor(startPos: Location, endPos: Location) {
     this.startPosition = startPos;
@@ -21,8 +21,8 @@ class Arrow {
     const length = calcDistance(startPos, endPos);
     const unitVector = {
       x: (endPos.x - startPos.x) / length,
-      y: (endPos.y - startPos.y) / length
-    }
+      y: (endPos.y - startPos.y) / length,
+    };
     const inLinePoint = {
       x: endPos.x - unitVector.x * ARROW_HEAD_LENGTH,
       y: endPos.y - unitVector.y * ARROW_HEAD_LENGTH,
@@ -31,12 +31,12 @@ class Arrow {
     this.arrowHead = {
       point1: rotate(inLinePoint, this.endPosition, RADIAN_VALUE_FOR_20_DEG),
       point2: rotate(inLinePoint, this.endPosition, -RADIAN_VALUE_FOR_20_DEG),
-      point3: this.endPosition
-    }
+      point3: this.endPosition,
+    };
   }
 
   draw() {
-    ctx.beginPath()
+    ctx.beginPath();
     ctx.moveTo(this.startPosition.x, this.startPosition.y);
     ctx.lineTo(this.endPosition.x, this.endPosition.y);
     ctx.stroke();

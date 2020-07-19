@@ -14,11 +14,13 @@
     "build": "webpack && tsc",
     "watch": "webpack --watch",
     "build:frontend": "webpack",
+    "prettify": "prettier --write \"src/**/*.{ts,js,tsx}\"",
     "start": "yarn build:frontend && yarn ts-node src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^13.13.2",
     "@types/webpack": "^4.41.12",
+    "prettier": "^2.0.5",
     "ts-loader": "^7.0.3",
     "ts-node": "^8.10.1",
     "typescript": "^3.8.3",

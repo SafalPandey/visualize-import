@@ -30,13 +30,13 @@ export function calcDistance(pos1: Location, pos2: Location) {
 }
 
 export function rotate(point: Location, center: Location, angle: number): Location {
-  const sine = Math.sin(angle)
+  const sine = Math.sin(angle);
   const cosine = Math.cos(angle);
   const xDiff = point.x - center.x;
   const yDiff = point.y - center.y;
 
   return {
     x: xDiff * cosine - yDiff * sine + center.x,
-    y: xDiff * sine + yDiff * cosine + center.y
-  }
+    y: xDiff * sine + yDiff * cosine + center.y,
+  };
 }

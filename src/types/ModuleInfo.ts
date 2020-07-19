@@ -1,13 +1,13 @@
-import Importer from "./Importer";
+import Importer from './Importer';
 
 interface ModuleInfo {
   Path: string;
-  IsLocal: boolean,
+  IsLocal: boolean;
   Info: {
     Path: string;
-    IsDir: boolean
-    Importers: Importer[]
-  }
+    IsDir: boolean;
+    Importers: Importer[];
+  };
 }
 
 export default ModuleInfo;

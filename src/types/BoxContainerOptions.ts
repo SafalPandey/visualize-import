@@ -1,4 +1,4 @@
-import BoxOptions from "./BoxOptions";
+import BoxOptions from './BoxOptions';
 
 interface BoxContainerOptions extends BoxOptions {
   showContent?: boolean;

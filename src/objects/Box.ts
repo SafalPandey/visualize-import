@@ -37,8 +37,12 @@ class Box extends Object2D {
   }
 
   contains(x: number, y: number): boolean {
-    return x > this.position.x && x < this.position.x + this.dimensions.width
-      && y > this.position.y && y < this.position.y + this.dimensions.height
+    return (
+      x > this.position.x &&
+      x < this.position.x + this.dimensions.width &&
+      y > this.position.y &&
+      y < this.position.y + this.dimensions.height
+    );
   }
 
   draw() {
@@ -50,7 +54,7 @@ class Box extends Object2D {
     ctx.stroke();
 
     if (this.background) {
-      ctx.save()
+      ctx.save();
       ctx.globalAlpha = 0.3;
       ctx.fillStyle = this.background;
       ctx.fill();

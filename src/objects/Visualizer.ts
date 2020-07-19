@@ -63,7 +63,7 @@ class Visualizer {
   }
 
   async visualize(filename: string) {
-    const { entrypoints, imports } = await this.fetchData(filename)
+    const { entrypoints, imports } = await this.fetchData(filename);
     const modules = { ...entrypoints, ...imports };
 
     this.showCanvas();
@@ -106,11 +106,11 @@ class Visualizer {
         const lastIndex = this.connectors.length - 1;
 
         if (this.moduleConnectorsMap[importerPath]) {
-          this.moduleConnectorsMap[importerPath].push(lastIndex)
+          this.moduleConnectorsMap[importerPath].push(lastIndex);
         } else {
-          this.moduleConnectorsMap[importerPath] = [lastIndex]
+          this.moduleConnectorsMap[importerPath] = [lastIndex];
         }
-      })
+      });
     }
   }
 
@@ -130,29 +130,28 @@ class Visualizer {
       x: nextColumnStartX,
       y: currentStartPos.y,
     };
-
   }
 
   handleSearchClick(str: string) {
     const matchingBox = this.findModule((box) => box.text.includes(str));
 
     if (!matchingBox) {
-      return
+      return;
     }
 
     scrollTo({ top: matchingBox.textPosition.y });
     this.redrawBoxes();
-    new Box(matchingBox.position, matchingBox.dimensions, { background: "#ff0" }).draw()
+    new Box(matchingBox.position, matchingBox.dimensions, { background: '#ff0' }).draw();
   }
 
   handleCanvasClickEvent(event: MouseEvent) {
     const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
 
     if (!clickedBox) {
-      return
+      return;
     }
 
-    this.redrawBoxes()
+    this.redrawBoxes();
     this.drawConnectors(clickedBox);
   }
 
@@ -178,19 +177,21 @@ class Visualizer {
   drawConnectors(moduleBox: ModuleBox | ModuleBox[]) {
     const modBoxArr = Array.isArray(moduleBox) ? moduleBox : [moduleBox];
 
-    modBoxArr.forEach(mb => this.moduleConnectorsMap[mb.moduleInfo.Path] &&
-      this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map(idx => this.connectors[idx]))
-    )
+    modBoxArr.forEach(
+      (mb) =>
+        this.moduleConnectorsMap[mb.moduleInfo.Path] &&
+        this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map((idx) => this.connectors[idx]))
+    );
   }
 
   drawObjects(objects: any[]) {
-    objects.forEach(object => object.draw());
+    objects.forEach((object) => object.draw());
   }
 
   findModule(predicate: (box: ModuleBox) => boolean) {
     for (const box of this.boxes) {
       if (predicate(box)) {
-        return box
+        return box;
       }
     }
   }
@@ -200,13 +201,12 @@ class Visualizer {
 
     for (const box of this.boxes) {
       if (predicate(box)) {
-        modules.push(box)
+        modules.push(box);
       }
     }
 
-    return modules
+    return modules;
   }
-
 }
 
 export default Visualizer;
