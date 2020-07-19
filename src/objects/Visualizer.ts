@@ -38,11 +38,9 @@ class Visualizer {
 
     this.toolsSection = document.getElementById('tools-section') as HTMLUListElement;
     this.toolsCollapse = document.getElementById('tools-collapse') as HTMLUListElement;
-    this.isToolsSectionActive = false;
-    this.toolsCollapse.innerHTML = '<';
-    this.visualizeSection.removeChild(this.toolsSection);
-
     this.toolsCollapse.onclick = () => this.handleToolCollapseClick();
+    this.isToolsSectionActive = false;
+    this.visualizeSection.removeChild(this.toolsSection);
 
     const inputElement = document.getElementById('filename-input') as HTMLInputElement;
     const buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
