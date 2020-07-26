@@ -35,4 +35,28 @@ export function createServer() {
   });
 }
 
-export default createServer;
+export function createHtmlServer() {
+  console.log('Creating file server.');
+
+  const server = http.createServer((req, res) => {
+    console.log('Got a request.', req.url);
+
+    const filename: string = FRONTEND_URL_TO_FILE_MAP[req.url];
+
+    if (!filename) {
+      return res.writeHead(400).end();
+    }
+
+    console.log(`Responding with file: ${filename}`);
+
+    res.setHeader('Content-Type', `text/${filename.split('.').pop()}`);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+
+    res.end(readFile(filename));
+  });
+
+  return server.listen(HTML_SERVER_PORT, () => {
+    console.log(`Listening on Port: ${HTML_SERVER_PORT}`);
+  });
+}
