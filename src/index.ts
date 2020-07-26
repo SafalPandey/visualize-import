@@ -1,12 +1,10 @@
 import open from 'open';
-import path from 'path';
 
 import { parseArg } from './utils';
-import createServer from './services/server';
 import parseImport, { shouldParse } from './services/parseImport';
+import { createServer, createHtmlServer, FRONTEND_SERVER_URL } from './services/server';
 
 const DEFAULT_OUTPUT_FILENAME = './imports.json';
-const INDEX_FILE_URL = `file://${path.join(process.cwd(), 'index.html')}`;
 
 async function main() {
   if (shouldParse()) {
@@ -18,12 +16,11 @@ async function main() {
     });
   }
 
-  const server = createServer();
+  createServer();
+  createHtmlServer();
 
-  console.log('Visualizing imports', INDEX_FILE_URL);
-  await open(INDEX_FILE_URL, { app: 'firefox', wait: true, url: true });
-
-  server.close();
+  console.log('Visualizing imports');
+  await open(FRONTEND_SERVER_URL, { wait: true, url: true });
 }
 
 (async () => {
