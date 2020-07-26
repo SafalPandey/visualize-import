@@ -19,10 +19,8 @@ async function main() {
   createServer();
   createHtmlServer();
 
-  console.log('Visualizing imports', INDEX_FILE_URL);
-  await open(INDEX_FILE_URL, { app: 'firefox', wait: true, url: true });
-
-  server.close();
+  console.log('Visualizing imports');
+  await open(FRONTEND_SERVER_URL, { wait: true, url: true });
 }
 
 (async () => {
