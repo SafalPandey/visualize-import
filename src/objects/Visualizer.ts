@@ -1,4 +1,5 @@
 import Box from './Box';
+import Arrow from './Arrow';
 import ModuleBox from './ModuleBox';
 import Connector from './Connector';
 import Location from '../types/Location';
@@ -38,6 +39,81 @@ class Visualizer {
     const searchButton = document.getElementById('search-button') as HTMLButtonElement;
     searchButton.onclick = () => this.handleSearchClick(searchInput.value);
 
+    const plotButton = document.getElementById('plot-button') as HTMLButtonElement;
+    plotButton.onclick = () => {
+      this.canvasElement.onclick = () => { };
+      ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+
+      const importerCountMap = this.boxes.reduce((acc, box, index) => {
+        const curImporterLength = box.moduleInfo.Info.Importers.length;
+        const importsCount = this.moduleConnectorsMap[box.moduleInfo.Path]?.length || 0;
+
+        acc.maxX = acc.maxX > curImporterLength ? acc.maxX : curImporterLength;
+        acc.maxY = acc.maxY > importsCount ? acc.maxY : importsCount;
+        acc.points.push({ x: curImporterLength, y: importsCount, index })
+
+        return acc;
+      }, { maxX: 0, maxY: 0, points: [] } as {
+        maxX: number;
+        maxY: number;
+        points: { x: number, y: number, index: number }[];
+      });
+
+      console.log(importerCountMap);
+
+      const RADIUS = 5;
+      const X_SCALE = 10;
+      const Y_SCALE = 10;
+      const graphXMax = (importerCountMap.maxX + 20) * X_SCALE + 40;
+      const graphYMax = (importerCountMap.maxY + 4) * Y_SCALE;
+      const calcXCoord = (importerCount: number) => +importerCount * X_SCALE + 40;
+      const calcYCoord = (importsCount: number) => graphYMax - importsCount * Y_SCALE;
+
+      this.canvasElement.onclick = (event) => {
+        console.log('clicked', event.offsetX, event.offsetY);
+
+        importerCountMap.points
+          .filter((point) => {
+            const xCoord = calcXCoord(point.x);
+            const yCoord = calcYCoord(point.y);
+
+            return event.offsetY >= yCoord - 5 && event.offsetY <= yCoord + 5 && event.offsetX >= xCoord - 5 && event.offsetX <= xCoord + 5
+          })
+          .map(clickedPoint => {
+            console.log('filtered', clickedPoint);
+            const xCoord = calcXCoord(clickedPoint.x);
+            const yCoord = calcYCoord(clickedPoint.y);
+            const moduleInfo = this.boxes[clickedPoint.index].moduleInfo;
+
+            new ModuleBox({ x: xCoord, y: yCoord }, moduleInfo, false).draw();
+            this.detailSection.innerHTML = JSON.stringify(moduleInfo, null, 2)
+            .replace(/ /g, '&nbsp;')
+            .split('\n')
+            .map((line) => `<li>${line}</li>`)
+            .join('');
+          })
+      };
+
+      this.canvasElement.width = 1800 > graphXMax ? window.innerWidth - CANVAS_WINDOW_MARGIN : graphXMax;
+
+      for (const { x: importerCount, y: importsCount } of importerCountMap.points) {
+        ctx.beginPath();
+        ctx.arc(
+          calcXCoord(importerCount),
+          calcYCoord(importsCount),
+          RADIUS,
+          0,
+          Math.PI * 2
+        );
+        ctx.stroke();
+        ctx.closePath();
+      }
+
+      ctx.fillText('Imports', 40, 40 - 10);
+      ctx.fillText('Imported By', 1800, graphYMax);
+      new Arrow({ x: 40, y: graphYMax }, { x: 1800 > graphXMax ? 1800 : graphXMax, y: graphYMax }).draw();
+      new Arrow({ x: 40, y: graphYMax }, { x: 40, y: 40 }).draw();
+    };
     this.toolsSection = document.getElementById('tools-section') as HTMLUListElement;
     this.toolsCollapse = document.getElementById('tools-collapse') as HTMLUListElement;
     this.toolsCollapse.onclick = () => this.handleToolCollapseClick();
