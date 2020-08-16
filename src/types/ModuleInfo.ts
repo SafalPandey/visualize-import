@@ -3,11 +3,12 @@ import Importer from './Importer';
 interface ModuleInfo {
   Path: string;
   IsLocal: boolean;
+  IsEntrypoint: boolean;
   Info: {
     Path: string;
     IsDir: boolean;
-    ImportsCount?: number;
-    Importers: Importer[];
+    Imports:  null | string[];
+    Importers:  null | Importer[];
   };
 }
 
