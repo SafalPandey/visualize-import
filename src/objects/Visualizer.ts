@@ -381,16 +381,12 @@ class Visualizer {
     modBoxArr.forEach(
       mb =>
         mb.moduleInfo.Info.Imports &&
-        this.drawObjects(mb.moduleInfo.Info.Imports
-          .map(path =>
-            this.boxes[this.moduleIdxMap[path]] &&
-            this.boxes[this.moduleIdxMap[mb.moduleInfo.Path]] &&
-            new Connector(
-              this.boxes[this.moduleIdxMap[mb.moduleInfo.Path]],
-              this.boxes[this.moduleIdxMap[path]]
-            )
-          )
-          .filter(c => !!c)
+        this.drawObjects(
+          mb.moduleInfo.Info.Imports.map(
+            path =>
+              this.boxes[this.moduleIdxMap[path]] &&
+              new Connector(this.boxes[this.moduleIdxMap[mb.moduleInfo.Path]], this.boxes[this.moduleIdxMap[path]])
+          ).filter(c => !!c)
         )
     );
   }

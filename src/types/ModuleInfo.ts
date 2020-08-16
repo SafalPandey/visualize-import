@@ -7,8 +7,8 @@ interface ModuleInfo {
   Info: {
     Path: string;
     IsDir: boolean;
-    Imports:  null | string[];
-    Importers:  null | Importer[];
+    Imports: null | string[];
+    Importers: null | Importer[];
   };
 }
 

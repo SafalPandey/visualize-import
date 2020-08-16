@@ -13,8 +13,8 @@ class ModuleBox extends BoxContainer {
       position,
       [
         `IsLocal -> ${moduleInfo.IsLocal}`,
-        `Imported By ${moduleInfo.Info.Importers ? moduleInfo.Info.Importers.length : 0} modules`,
-        `Imports ${moduleInfo.Info.Imports ? moduleInfo.Info.Imports.length: 0} modules directly`
+        `Imported By ${moduleInfo.Info.Importers?.length || 0} modules`,
+        `Imports ${moduleInfo.Info.Imports?.length || 0} modules directly`
       ].join('\n')
     );
 
