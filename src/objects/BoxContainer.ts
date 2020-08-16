@@ -43,16 +43,16 @@ class BoxContainer extends TextBox {
 
     this.dimensions = {
       height: boxProps.dimensions.height + this.textHeight + TEXT_HEIGHT,
-      width: innerWidth + TEXT_HEIGHT * 4,
+      width: innerWidth + TEXT_HEIGHT * 4
     };
     this.position = {
       x: boxProps.position.x - TEXT_HEIGHT * 2,
-      y: boxProps.position.y - this.textHeight,
+      y: boxProps.position.y - this.textHeight
     };
     this.vertices = Box.getBoxVertices(this);
     this.textPosition = {
       x: this.position.x + TEXT_HEIGHT * 2,
-      y: this.position.y,
+      y: this.position.y
     };
   }
 

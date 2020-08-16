@@ -12,7 +12,7 @@ async function main() {
       tsconfig: parseArg(process.argv, '-tsconfig'),
       language: parseArg(process.argv, '-l') || 'ts',
       entrypoint: parseArg(process.argv, '-entry-point'),
-      outputFileName: parseArg(process.argv, '-o') || DEFAULT_OUTPUT_FILENAME,
+      outputFileName: parseArg(process.argv, '-o') || DEFAULT_OUTPUT_FILENAME
     });
   }
 

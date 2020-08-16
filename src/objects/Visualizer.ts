@@ -10,7 +10,7 @@ import {
   SERVER_PORT,
   CANVAS_WINDOW_MARGIN,
   BOX_VISUALIZATION_MARGIN_X,
-  BOX_VISUALIZATION_MARGIN_Y,
+  BOX_VISUALIZATION_MARGIN_Y
 } from '../constants';
 
 class Visualizer {
@@ -29,7 +29,7 @@ class Visualizer {
 
   constructor() {
     this.canvasElement = canvasElement;
-    this.canvasElement.onclick = (event) => this.handleCanvasClickEvent(event);
+    this.canvasElement.onclick = event => this.handleCanvasClickEvent(event);
     this.inputSection = document.getElementById('input-section') as HTMLElement;
     this.visualizeSection = document.getElementById('visualize-section') as HTMLElement;
     this.detailSection = document.getElementById('details') as HTMLElement;
@@ -141,13 +141,13 @@ class Visualizer {
     if (nextColumnStartX + projectedWidthForNextBox > this.canvasElement.width) {
       return {
         x: BOX_VISUALIZATION_MARGIN_X,
-        y: nextRowStartY,
+        y: nextRowStartY
       };
     }
 
     return {
       x: nextColumnStartX,
-      y: currentStartPos.y,
+      y: currentStartPos.y
     };
   }
 
@@ -166,7 +166,7 @@ class Visualizer {
   }
 
   handleSearchClick(str: string) {
-    const matchingBoxes = this.findAllModules((box) => box.text.toLowerCase().includes(str.toLowerCase()));
+    const matchingBoxes = this.findAllModules(box => box.text.toLowerCase().includes(str.toLowerCase()));
     this.searchResults.innerHTML = '';
 
     if (!matchingBoxes.length) {
@@ -182,7 +182,7 @@ class Visualizer {
       listItem.innerText = matchingBox.text;
 
       listItem.onclick = () => {
-        searchResults.forEach((result) => (result.className = ''));
+        searchResults.forEach(result => (result.className = ''));
 
         listItem.className = 'active';
         scrollTo({ top: matchingBox.textPosition.y });
@@ -202,7 +202,7 @@ class Visualizer {
     ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
     const importerCountMap = this.boxes
-      .filter((box) => box.moduleInfo.IsLocal)
+      .filter(box => box.moduleInfo.IsLocal)
       .reduce(
         (acc, box, index) => {
           const curImporterLength = box.moduleInfo.Info.Importers.length;
@@ -229,9 +229,9 @@ class Visualizer {
     const calcXCoord = (importerCount: number) => +importerCount * X_SCALE + BOX_VISUALIZATION_MARGIN_X;
     const calcYCoord = (importsCount: number) => graphYMax - importsCount * Y_SCALE;
 
-    this.canvasElement.onclick = (event) => {
+    this.canvasElement.onclick = event => {
       const infos = importerCountMap.points
-        .filter((point) => {
+        .filter(point => {
           const xCoord = calcXCoord(point.x);
           const yCoord = calcYCoord(point.y);
 
@@ -242,7 +242,7 @@ class Visualizer {
             event.offsetX <= xCoord + RADIUS
           );
         })
-        .map((clickedPoint) => {
+        .map(clickedPoint => {
           const moduleInfo = this.boxes[clickedPoint.index].moduleInfo;
 
           new ModuleBox({ x: calcXCoord(clickedPoint.x), y: calcYCoord(clickedPoint.y) }, moduleInfo, false).draw();
@@ -254,7 +254,7 @@ class Visualizer {
         JSON.stringify(curModuleInfo, null, 2)
           .replace(/ /g, '&nbsp;')
           .split('\n')
-          .map((line) => `<p>${line}</p>`)
+          .map(line => `<p>${line}</p>`)
           .join('');
         acc += `
           <li>${idx + 1}
@@ -300,12 +300,12 @@ class Visualizer {
     this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
       .replace(/ /g, '&nbsp;')
       .split('\n')
-      .map((line) => `<li>${line}</li>`)
+      .map(line => `<li>${line}</li>`)
       .join('');
   }
 
   getClickedBox(clickX: number, clickY: number) {
-    return this.findModule((box) => box.contains(clickX, clickY));
+    return this.findModule(box => box.contains(clickX, clickY));
   }
 
   growCanvasHeight(newHeight: number) {
@@ -327,14 +327,14 @@ class Visualizer {
     const modBoxArr = Array.isArray(moduleBox) ? moduleBox : [moduleBox];
 
     modBoxArr.forEach(
-      (mb) =>
+      mb =>
         this.moduleConnectorsMap[mb.moduleInfo.Path] &&
-        this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map((idx) => this.connectors[idx]))
+        this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map(idx => this.connectors[idx]))
     );
   }
 
   drawObjects(objects: any[]) {
-    objects.forEach((object) => object.draw());
+    objects.forEach(object => object.draw());
   }
 
   findModule(predicate: (box: ModuleBox) => boolean) {

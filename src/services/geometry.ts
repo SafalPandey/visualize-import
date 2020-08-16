@@ -21,7 +21,7 @@ export function computeClosestVertices(thing1: Object2D, thing2: Object2D) {
   return {
     shortestDistance,
     closestT1Vertex,
-    closestT2Vertex,
+    closestT2Vertex
   };
 }
 
@@ -37,6 +37,6 @@ export function rotate(point: Location, center: Location, angle: number): Locati
 
   return {
     x: xDiff * cosine - yDiff * sine + center.x,
-    y: xDiff * sine + yDiff * cosine + center.y,
+    y: xDiff * sine + yDiff * cosine + center.y
   };
 }
