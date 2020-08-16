@@ -25,6 +25,7 @@ class Visualizer {
   searchResults: HTMLUListElement;
   canvasElement: HTMLCanvasElement;
   moduleIdxMap: { [key: string]: number };
+  importsMap: { [key: string]: string[] };
   moduleConnectorsMap: { [key: string]: number[] };
 
   constructor() {
@@ -57,6 +58,7 @@ class Visualizer {
 
     this.boxes = [];
     this.connectors = [];
+    this.importsMap = {};
     this.moduleIdxMap = {};
     this.moduleConnectorsMap = {};
   }
@@ -130,6 +132,18 @@ class Visualizer {
           this.moduleConnectorsMap[importerPath] = [lastIndex];
         }
       });
+    }
+  }
+
+  createImportsMap(modules: ModuleInfo[]) {
+    for (const module of modules) {
+      for (const importer of module.Info.Importers) {
+        if (this.importsMap[importer.Path]) {
+          this.importsMap[importer.Path].push(module.Path);
+        } else {
+          this.importsMap[importer.Path] = [module.Path];
+        }
+      }
     }
   }
 
