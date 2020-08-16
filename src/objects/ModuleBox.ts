@@ -9,6 +9,8 @@ class ModuleBox extends BoxContainer {
 
   constructor(position: Location, moduleInfo: ModuleInfo) {
     const pathArr = moduleInfo.Path.split('/');
+    const baseName = pathArr.pop();
+    const moduleName = baseName.startsWith('index.') ? pathArr.pop() + '/' : baseName;
     const infoBox = new TextBox(
       position,
       [
@@ -18,7 +20,7 @@ class ModuleBox extends BoxContainer {
       ].join('\n')
     );
 
-    super(infoBox, pathArr[pathArr.length - 1], moduleInfo.IsEntrypoint ? { background: '#f00' } : null);
+    super(infoBox, moduleName, moduleInfo.IsEntrypoint ? { background: '#f00' } : null);
     this.infoBox = infoBox;
     this.moduleInfo = moduleInfo;
   }
