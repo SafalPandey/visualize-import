@@ -12,8 +12,9 @@ class ModuleBox extends BoxContainer {
     const infoBox = new TextBox(
       position,
       `IsLocal -> ${moduleInfo.IsLocal}\nImported By ${moduleInfo.Info.Importers.length} modules${
-      moduleInfo.Info.ImportsCount ? `\nImports ${moduleInfo.Info.ImportsCount} modules directly` : ''
-      }`);
+        moduleInfo.Info.ImportsCount ? `\nImports ${moduleInfo.Info.ImportsCount} modules directly` : ''
+      }`
+    );
 
     super(infoBox, pathArr[pathArr.length - 1], isEntrypoint ? { background: '#f00' } : null);
     this.infoBox = infoBox;

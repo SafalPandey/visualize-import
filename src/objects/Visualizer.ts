@@ -113,7 +113,7 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
-    const moduleInfos = Object.values<ModuleInfo>(modules)
+    const moduleInfos = Object.values<ModuleInfo>(modules);
     this.createConnectors(moduleInfos);
     this.createImportsMap(moduleInfos);
 
@@ -132,7 +132,7 @@ class Visualizer {
     // Create modules
     for (const modulePath in entrypoints) {
       const moduleInfo = modules[modulePath];
-      const moduleBox = new ModuleBox(startPos, moduleInfo, true)
+      const moduleBox = new ModuleBox(startPos, moduleInfo, true);
 
       this.boxes.push(moduleBox);
       this.moduleIdxMap[modulePath] = this.boxes.length - 1;
@@ -146,8 +146,7 @@ class Visualizer {
 
       if (!clickedBox) return;
 
-      const importedPaths = this.importsMap[clickedBox.moduleInfo.Path]
-      console.log(importedPaths);
+      const importedPaths = this.importsMap[clickedBox.moduleInfo.Path];
 
       if (!importedPaths) return;
 
@@ -177,7 +176,13 @@ class Visualizer {
       this.redrawBoxes();
       this.createConnectors(Object.values(importedModules.map(p => modules[p])));
       this.drawConnectors(this.findAllModules(box => importedPaths.includes(box.moduleInfo.Path)).concat(clickedBox));
-    }
+
+      this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
+        .replace(/ /g, '&nbsp;')
+        .split('\n')
+        .map(line => `<li>${line}</li>`)
+        .join('');
+    };
   }
 
   createConnectors(modules: ModuleInfo[]) {
@@ -187,12 +192,12 @@ class Visualizer {
       const importers = module.Info.Importers;
       const modulePath = module.Path;
 
-
       importers.forEach(({ Path: importerPath }: Importer) => {
-        this.boxes[this.moduleIdxMap[importerPath]] && this.boxes[this.moduleIdxMap[modulePath]] &&
-        this.connectors.push(
-          new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
-        );
+        this.boxes[this.moduleIdxMap[importerPath]] &&
+          this.boxes[this.moduleIdxMap[modulePath]] &&
+          this.connectors.push(
+            new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
+          );
         const lastIndex = this.connectors.length - 1;
 
         if (this.moduleConnectorsMap[importerPath]) {
@@ -335,14 +340,27 @@ class Visualizer {
         });
 
       this.detailSection.innerHTML = infos.reduce((acc, curModuleInfo, idx) => {
-        JSON.stringify(curModuleInfo, null, 2)
+        const modInfo = {
+          ...curModuleInfo,
+          Info: {
+            Path: curModuleInfo.Info.Path,
+            IsDir: curModuleInfo.Info.IsDir,
+            ImportsCount: curModuleInfo.Info.ImportsCount,
+            ImportersCount: curModuleInfo.Info.Importers.length
+          }
+        };
+        const details = JSON.stringify(modInfo, null, 2)
           .replace(/ /g, '&nbsp;')
           .split('\n')
           .map(line => `<p>${line}</p>`)
           .join('');
+
         acc += `
-          <li>${idx + 1}
-            <details><summary>${curModuleInfo.Path.split('/').pop()}</summary>${curModuleInfo}</details>
+          <li>
+            <details>
+              <summary>${idx + 1} ${curModuleInfo.Path.split('/').pop()}</summary>
+              ${details}
+            </details>
           </li>
         `;
 
