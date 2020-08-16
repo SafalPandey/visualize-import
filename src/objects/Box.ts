@@ -13,16 +13,16 @@ class Box extends Object2D {
       box.position,
       {
         x: box.position.x + box.dimensions.width,
-        y: box.position.y,
+        y: box.position.y
       },
       {
         x: box.position.x,
-        y: box.position.y + box.dimensions.height,
+        y: box.position.y + box.dimensions.height
       },
       {
         x: box.position.x + box.dimensions.width,
-        y: box.position.y + box.dimensions.height,
-      },
+        y: box.position.y + box.dimensions.height
+      }
     ];
   }
 

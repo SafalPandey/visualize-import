@@ -13,7 +13,7 @@ class TextBox extends Box {
   static getMaxWidth(textArr: string[]) {
     let maxWidth: number = 0;
 
-    textArr.forEach((line) => {
+    textArr.forEach(line => {
       const currentWidth = ctx.measureText(line).width;
 
       if (currentWidth > maxWidth) {
@@ -30,7 +30,7 @@ class TextBox extends Box {
     const textHeight = TEXT_HEIGHT + 1.5 * TEXT_HEIGHT * textArr.length;
     const dimensions = {
       width: textWidth + 2 * TEXT_HEIGHT,
-      height: textHeight,
+      height: textHeight
     };
 
     super(pos, dimensions, opts);
@@ -40,7 +40,7 @@ class TextBox extends Box {
     this.textHeight = textHeight;
     this.textPosition = {
       x: this.position.x + TEXT_HEIGHT,
-      y: this.position.y,
+      y: this.position.y
     };
   }
 

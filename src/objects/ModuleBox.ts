@@ -11,8 +11,9 @@ class ModuleBox extends BoxContainer {
     const pathArr = moduleInfo.Path.split('/');
     const infoBox = new TextBox(
       position,
-      JSON.stringify({ IsLocal: moduleInfo.IsLocal, IsDir: moduleInfo.Info.IsDir }, null, 4)
-    );
+      `IsLocal -> ${moduleInfo.IsLocal}\nImported By ${moduleInfo.Info.Importers.length} modules${
+      moduleInfo.Info.ImportsCount ? `\nImports ${moduleInfo.Info.ImportsCount} modules directly` : ''
+      }`);
 
     super(infoBox, pathArr[pathArr.length - 1], isEntrypoint ? { background: '#f00' } : null);
     this.infoBox = infoBox;
