@@ -29,7 +29,6 @@ class Visualizer {
 
   constructor() {
     this.canvasElement = canvasElement;
-    this.canvasElement.onclick = event => this.handleCanvasClickEvent(event);
     this.inputSection = document.getElementById('input-section') as HTMLElement;
     this.visualizeSection = document.getElementById('visualize-section') as HTMLElement;
     this.detailSection = document.getElementById('details') as HTMLElement;
@@ -86,6 +85,7 @@ class Visualizer {
     const modules = { ...entrypoints, ...imports };
 
     this.showCanvas();
+    this.canvasElement.onclick = event => this.handleCanvasClickEvent(event);
 
     this.boxes = [];
     this.moduleIdxMap = {};
@@ -244,6 +244,7 @@ class Visualizer {
         })
         .map(clickedPoint => {
           const moduleInfo = this.boxes[clickedPoint.index].moduleInfo;
+          moduleInfo.Info.ImportsCount = clickedPoint.y;
 
           new ModuleBox({ x: calcXCoord(clickedPoint.x), y: calcYCoord(clickedPoint.y) }, moduleInfo, false).draw();
 
