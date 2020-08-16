@@ -3,7 +3,6 @@ import Arrow from './Arrow';
 import ModuleBox from './ModuleBox';
 import Connector from './Connector';
 import Location from '../types/Location';
-import Importer from '../types/Importer';
 import ModuleInfo from '../types/ModuleInfo';
 import { canvasElement, ctx } from '../services/visualize';
 import {
@@ -15,7 +14,6 @@ import {
 
 class Visualizer {
   boxes: ModuleBox[];
-  connectors: Connector[];
   inputSection: HTMLElement;
   toolsSection: HTMLElement;
   toolsCollapse: HTMLElement;
@@ -25,8 +23,6 @@ class Visualizer {
   searchResults: HTMLUListElement;
   canvasElement: HTMLCanvasElement;
   moduleIdxMap: { [key: string]: number };
-  importsMap: { [key: string]: string[] };
-  moduleConnectorsMap: { [key: string]: number[] };
 
   constructor() {
     this.canvasElement = canvasElement;
@@ -61,10 +57,7 @@ class Visualizer {
     this.hideCanvas();
 
     this.boxes = [];
-    this.connectors = [];
-    this.importsMap = {};
     this.moduleIdxMap = {};
-    this.moduleConnectorsMap = {};
   }
 
   hideCanvas() {
@@ -112,10 +105,6 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
-    const moduleInfos = Object.values<ModuleInfo>(modules);
-    this.createConnectors(moduleInfos);
-    this.createImportsMap(moduleInfos);
-
     this.drawBoxes();
   }
 
@@ -139,7 +128,6 @@ class Visualizer {
       startPos = this.calcNextModuleStartPos(startPos, moduleBox);
     }
     this.redrawBoxes();
-    this.createImportsMap(Object.values(modules));
 
     this.canvasElement.onclick = event => {
       const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
@@ -174,7 +162,6 @@ class Visualizer {
       }
 
       this.redrawBoxes();
-      this.createConnectors(Object.values(importedModules.map(p => modules[p])));
       this.drawConnectors(this.findAllModules(box => importedPaths.includes(box.moduleInfo.Path)).concat(clickedBox));
 
       this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
@@ -183,42 +170,6 @@ class Visualizer {
         .map(line => `<li>${line}</li>`)
         .join('');
     };
-  }
-
-  createConnectors(modules: ModuleInfo[]) {
-    this.moduleConnectorsMap = {};
-    // Create connectors
-    for (const module of modules) {
-      const importers = module.Info.Importers;
-      const modulePath = module.Path;
-
-      importers.forEach(({ Path: importerPath }: Importer) => {
-        this.boxes[this.moduleIdxMap[importerPath]] &&
-          this.boxes[this.moduleIdxMap[modulePath]] &&
-          this.connectors.push(
-            new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
-          );
-        const lastIndex = this.connectors.length - 1;
-
-        if (this.moduleConnectorsMap[importerPath]) {
-          this.moduleConnectorsMap[importerPath].push(lastIndex);
-        } else {
-          this.moduleConnectorsMap[importerPath] = [lastIndex];
-        }
-      });
-    }
-  }
-
-  createImportsMap(modules: ModuleInfo[]) {
-    for (const module of modules) {
-      for (const importer of module.Info.Importers) {
-        if (this.importsMap[importer.Path]) {
-          this.importsMap[importer.Path].push(module.Path);
-        } else {
-          this.importsMap[importer.Path] = [module.Path];
-        }
-      }
-    }
   }
 
   calcNextModuleStartPos(currentStartPos: Location, currentBox: Box) {
