@@ -244,7 +244,7 @@ class Visualizer {
       .filter(box => box.moduleInfo.IsLocal)
       .reduce(
         (acc, box, index) => {
-          const curImporterLength = box.moduleInfo.Info.Importers?.length;
+          const curImporterLength = box.moduleInfo.Info.Importers?.length || 0;
           const importsCount = box.moduleInfo.Info.Imports?.length || 0;
 
           acc.maxX = acc.maxX > curImporterLength ? acc.maxX : curImporterLength;
@@ -295,8 +295,8 @@ class Visualizer {
           Info: {
             Path: curModuleInfo.Info.Path,
             IsDir: curModuleInfo.Info.IsDir,
-            ImportsCount: curModuleInfo.Info.Imports.length,
-            ImportersCount: curModuleInfo.Info.Importers.length
+            ImportsCount: curModuleInfo.Info.Imports?.length || 0,
+            ImportersCount: curModuleInfo.Info.Importers?.length || 0
           }
         };
         const details = JSON.stringify(modInfo, null, 2)
