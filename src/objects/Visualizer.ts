@@ -267,7 +267,7 @@ class Visualizer {
       }, '');
     };
 
-    this.canvasElement.width = 1800 > graphXMax ? window.innerWidth - CANVAS_WINDOW_MARGIN : graphXMax;
+    this.canvasElement.width = window.innerWidth > graphXMax ? window.innerWidth - CANVAS_WINDOW_MARGIN : graphXMax;
 
     for (const { x: importerCount, y: importsCount } of importerCountMap.points) {
       ctx.beginPath();
