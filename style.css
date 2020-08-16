@@ -90,6 +90,7 @@ canvas {
 #tools-section details {
   line-height: 2em;
   border: solid #c3c3c3 1px;
+  margin: 0.5em auto;
 }
 
 #tools-section ul {
