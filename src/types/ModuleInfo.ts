@@ -6,6 +6,7 @@ interface ModuleInfo {
   Info: {
     Path: string;
     IsDir: boolean;
+    ImportsCount?: number;
     Importers: Importer[];
   };
 }
