@@ -10,7 +10,7 @@ function parseImport(filename: string, opts?: ParseImportParams) {
     `npx parse-import -f ${filename} ${optArg('-l', language)} ${optArg('-tsconfig', tsconfig)} ${optArg(
       '-entry-point',
       entrypoint
-    )} -o ${outputFileName}`
+    )} -o ${outputFileName} -no-indent`
   );
 }
 

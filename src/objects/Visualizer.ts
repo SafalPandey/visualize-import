@@ -3,7 +3,6 @@ import Arrow from './Arrow';
 import ModuleBox from './ModuleBox';
 import Connector from './Connector';
 import Location from '../types/Location';
-import Importer from '../types/Importer';
 import ModuleInfo from '../types/ModuleInfo';
 import { canvasElement, ctx } from '../services/visualize';
 import {
@@ -15,7 +14,6 @@ import {
 
 class Visualizer {
   boxes: ModuleBox[];
-  connectors: Connector[];
   inputSection: HTMLElement;
   toolsSection: HTMLElement;
   toolsCollapse: HTMLElement;
@@ -25,8 +23,6 @@ class Visualizer {
   searchResults: HTMLUListElement;
   canvasElement: HTMLCanvasElement;
   moduleIdxMap: { [key: string]: number };
-  importsMap: { [key: string]: string[] };
-  moduleConnectorsMap: { [key: string]: number[] };
 
   constructor() {
     this.canvasElement = canvasElement;
@@ -61,10 +57,7 @@ class Visualizer {
     this.hideCanvas();
 
     this.boxes = [];
-    this.connectors = [];
-    this.importsMap = {};
     this.moduleIdxMap = {};
-    this.moduleConnectorsMap = {};
   }
 
   hideCanvas() {
@@ -80,15 +73,14 @@ class Visualizer {
     this.visualizeSection.style.display = 'block';
   }
 
-  async fetchData(filename: string) {
+  async fetchData(filename: string): Promise<{ [key: string]: ModuleInfo }> {
     const res = await fetch(`http://localhost:${SERVER_PORT}?filename=${filename}`);
 
     return res.json();
   }
 
   async visualize(filename: string) {
-    const { entrypoints, imports } = await this.fetchData(filename);
-    const modules = { ...entrypoints, ...imports };
+    const modules = await this.fetchData(filename);
 
     this.showCanvas();
     this.canvasElement.onclick = event => this.handleCanvasClickEvent(event);
@@ -100,7 +92,7 @@ class Visualizer {
     // Create modules
     for (const modulePath in modules) {
       const moduleInfo = modules[modulePath];
-      const moduleBox = new ModuleBox(startPos, moduleInfo, !!entrypoints[modulePath]);
+      const moduleBox = new ModuleBox(startPos, moduleInfo);
 
       this.boxes.push(moduleBox);
       this.moduleIdxMap[modulePath] = this.boxes.length - 1;
@@ -113,40 +105,36 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
-    const moduleInfos = Object.values<ModuleInfo>(modules);
-    this.createConnectors(moduleInfos);
-    this.createImportsMap(moduleInfos);
-
     this.drawBoxes();
   }
 
   async visualizeCollapsible(filename: string) {
-    const { entrypoints, imports } = await this.fetchData(filename);
-    const modules = { ...entrypoints, ...imports };
-
+    const modules = await this.fetchData(filename);
     this.showCanvas();
 
     this.boxes = [];
     this.moduleIdxMap = {};
     let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
     // Create modules
-    for (const modulePath in entrypoints) {
+    for (const modulePath in modules) {
       const moduleInfo = modules[modulePath];
-      const moduleBox = new ModuleBox(startPos, moduleInfo, true);
+
+      if (!moduleInfo.IsEntrypoint) continue;
+
+      const moduleBox = new ModuleBox(startPos, moduleInfo);
 
       this.boxes.push(moduleBox);
       this.moduleIdxMap[modulePath] = this.boxes.length - 1;
       startPos = this.calcNextModuleStartPos(startPos, moduleBox);
     }
     this.redrawBoxes();
-    this.createImportsMap(Object.values(modules));
 
     this.canvasElement.onclick = event => {
       const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
 
       if (!clickedBox) return;
 
-      const importedPaths = this.importsMap[clickedBox.moduleInfo.Path];
+      const importedPaths = clickedBox.moduleInfo.Info.Imports;
 
       if (!importedPaths) return;
 
@@ -158,7 +146,7 @@ class Visualizer {
         let moduleBox = this.findModule(box => box.moduleInfo.Path === modulePath);
 
         if (!moduleBox) {
-          moduleBox = new ModuleBox(startPos, moduleInfo, !!entrypoints[modulePath]);
+          moduleBox = new ModuleBox(startPos, moduleInfo);
 
           this.boxes.push(moduleBox);
           this.moduleIdxMap[modulePath] = this.boxes.length - 1;
@@ -174,7 +162,6 @@ class Visualizer {
       }
 
       this.redrawBoxes();
-      this.createConnectors(Object.values(importedModules.map(p => modules[p])));
       this.drawConnectors(this.findAllModules(box => importedPaths.includes(box.moduleInfo.Path)).concat(clickedBox));
 
       this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
@@ -183,42 +170,6 @@ class Visualizer {
         .map(line => `<li>${line}</li>`)
         .join('');
     };
-  }
-
-  createConnectors(modules: ModuleInfo[]) {
-    this.moduleConnectorsMap = {};
-    // Create connectors
-    for (const module of modules) {
-      const importers = module.Info.Importers;
-      const modulePath = module.Path;
-
-      importers.forEach(({ Path: importerPath }: Importer) => {
-        this.boxes[this.moduleIdxMap[importerPath]] &&
-          this.boxes[this.moduleIdxMap[modulePath]] &&
-          this.connectors.push(
-            new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
-          );
-        const lastIndex = this.connectors.length - 1;
-
-        if (this.moduleConnectorsMap[importerPath]) {
-          this.moduleConnectorsMap[importerPath].push(lastIndex);
-        } else {
-          this.moduleConnectorsMap[importerPath] = [lastIndex];
-        }
-      });
-    }
-  }
-
-  createImportsMap(modules: ModuleInfo[]) {
-    for (const module of modules) {
-      for (const importer of module.Info.Importers) {
-        if (this.importsMap[importer.Path]) {
-          this.importsMap[importer.Path].push(module.Path);
-        } else {
-          this.importsMap[importer.Path] = [module.Path];
-        }
-      }
-    }
   }
 
   calcNextModuleStartPos(currentStartPos: Location, currentBox: Box) {
@@ -293,8 +244,8 @@ class Visualizer {
       .filter(box => box.moduleInfo.IsLocal)
       .reduce(
         (acc, box, index) => {
-          const curImporterLength = box.moduleInfo.Info.Importers.length;
-          const importsCount = this.moduleConnectorsMap[box.moduleInfo.Path]?.length || 0;
+          const curImporterLength = box.moduleInfo.Info.Importers?.length || 0;
+          const importsCount = box.moduleInfo.Info.Imports?.length || 0;
 
           acc.maxX = acc.maxX > curImporterLength ? acc.maxX : curImporterLength;
           acc.maxY = acc.maxY > importsCount ? acc.maxY : importsCount;
@@ -332,9 +283,8 @@ class Visualizer {
         })
         .map(clickedPoint => {
           const moduleInfo = this.boxes[clickedPoint.index].moduleInfo;
-          moduleInfo.Info.ImportsCount = clickedPoint.y;
 
-          new ModuleBox({ x: calcXCoord(clickedPoint.x), y: calcYCoord(clickedPoint.y) }, moduleInfo, false).draw();
+          new ModuleBox({ x: calcXCoord(clickedPoint.x), y: calcYCoord(clickedPoint.y) }, moduleInfo).draw();
 
           return moduleInfo;
         });
@@ -345,8 +295,8 @@ class Visualizer {
           Info: {
             Path: curModuleInfo.Info.Path,
             IsDir: curModuleInfo.Info.IsDir,
-            ImportsCount: curModuleInfo.Info.ImportsCount,
-            ImportersCount: curModuleInfo.Info.Importers.length
+            ImportsCount: curModuleInfo.Info.Imports?.length || 0,
+            ImportersCount: curModuleInfo.Info.Importers?.length || 0
           }
         };
         const details = JSON.stringify(modInfo, null, 2)
@@ -430,8 +380,14 @@ class Visualizer {
 
     modBoxArr.forEach(
       mb =>
-        this.moduleConnectorsMap[mb.moduleInfo.Path] &&
-        this.drawObjects(this.moduleConnectorsMap[mb.moduleInfo.Path].map(idx => this.connectors[idx]))
+        mb.moduleInfo.Info.Imports &&
+        this.drawObjects(
+          mb.moduleInfo.Info.Imports.map(
+            path =>
+              this.boxes[this.moduleIdxMap[path]] &&
+              new Connector(this.boxes[this.moduleIdxMap[mb.moduleInfo.Path]], this.boxes[this.moduleIdxMap[path]])
+          ).filter(c => !!c)
+        )
     );
   }
 
