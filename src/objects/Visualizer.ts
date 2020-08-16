@@ -39,11 +39,6 @@ class Visualizer {
     const searchButton = document.getElementById('search-button') as HTMLButtonElement;
     searchButton.onclick = () => this.handleSearchClick(searchInput.value);
 
-    const plotButton = document.getElementById('plot-graph-button') as HTMLButtonElement;
-    plotButton.onclick = () => this.plotGraph();
-
-    const drawBoxButton = document.getElementById('draw-box-button') as HTMLButtonElement;
-    drawBoxButton.onclick = () => this.visualize(inputElement.value);
     this.toolsSection = document.getElementById('tools-section') as HTMLUListElement;
     this.toolsCollapse = document.getElementById('tools-collapse') as HTMLUListElement;
     this.toolsCollapse.onclick = () => this.handleToolCollapseClick();
@@ -52,7 +47,16 @@ class Visualizer {
 
     const inputElement = document.getElementById('filename-input') as HTMLInputElement;
     const buttonElement = document.getElementById('visualize-button') as HTMLButtonElement;
-    buttonElement.onclick = () => this.visualize(inputElement.value);
+    buttonElement.onclick = () => this.visualizeCollapsible(inputElement.value);
+
+    const plotButton = document.getElementById('plot-graph-button') as HTMLButtonElement;
+    plotButton.onclick = () => this.plotGraph();
+
+    const drawBoxButton = document.getElementById('draw-box-button') as HTMLButtonElement;
+    drawBoxButton.onclick = () => this.visualize(inputElement.value);
+
+    const vizCollapseButton = document.getElementById('visualize-collapsible') as HTMLButtonElement;
+    vizCollapseButton.onclick = () => this.visualizeCollapsible(inputElement.value);
 
     this.hideCanvas();
 
@@ -109,18 +113,83 @@ class Visualizer {
         this.growCanvasHeight(nextRowStartY);
       }
     }
-    this.createConnectors(Object.values(modules));
+    const moduleInfos = Object.values<ModuleInfo>(modules)
+    this.createConnectors(moduleInfos);
+    this.createImportsMap(moduleInfos);
 
     this.drawBoxes();
   }
 
+  async visualizeCollapsible(filename: string) {
+    const { entrypoints, imports } = await this.fetchData(filename);
+    const modules = { ...entrypoints, ...imports };
+
+    this.showCanvas();
+
+    this.boxes = [];
+    this.moduleIdxMap = {};
+    let startPos = { x: BOX_VISUALIZATION_MARGIN_X, y: BOX_VISUALIZATION_MARGIN_Y };
+    // Create modules
+    for (const modulePath in entrypoints) {
+      const moduleInfo = modules[modulePath];
+      const moduleBox = new ModuleBox(startPos, moduleInfo, true)
+
+      this.boxes.push(moduleBox);
+      this.moduleIdxMap[modulePath] = this.boxes.length - 1;
+      startPos = this.calcNextModuleStartPos(startPos, moduleBox);
+    }
+    this.redrawBoxes();
+    this.createImportsMap(Object.values(modules));
+
+    this.canvasElement.onclick = event => {
+      const clickedBox = this.getClickedBox(event.offsetX, event.offsetY);
+
+      if (!clickedBox) return;
+
+      const importedPaths = this.importsMap[clickedBox.moduleInfo.Path]
+      console.log(importedPaths);
+
+      if (!importedPaths) return;
+
+      const importedModules = Object.keys(modules).filter(path => importedPaths.includes(path));
+
+      // Create modules
+      for (const modulePath of importedModules) {
+        const moduleInfo = modules[modulePath];
+        let moduleBox = this.findModule(box => box.moduleInfo.Path === modulePath);
+
+        if (!moduleBox) {
+          moduleBox = new ModuleBox(startPos, moduleInfo, !!entrypoints[modulePath]);
+
+          this.boxes.push(moduleBox);
+          this.moduleIdxMap[modulePath] = this.boxes.length - 1;
+
+          // Calculate start position of next module.
+          startPos = this.calcNextModuleStartPos(startPos, moduleBox);
+          const nextRowStartY = startPos.y + moduleBox.dimensions.height + BOX_VISUALIZATION_MARGIN_Y;
+
+          if (this.canvasElement.height < nextRowStartY) {
+            this.growCanvasHeight(nextRowStartY);
+          }
+        }
+      }
+
+      this.redrawBoxes();
+      this.createConnectors(Object.values(importedModules.map(p => modules[p])));
+      this.drawConnectors(this.findAllModules(box => importedPaths.includes(box.moduleInfo.Path)).concat(clickedBox));
+    }
+  }
+
   createConnectors(modules: ModuleInfo[]) {
+    this.moduleConnectorsMap = {};
     // Create connectors
     for (const module of modules) {
       const importers = module.Info.Importers;
       const modulePath = module.Path;
 
+
       importers.forEach(({ Path: importerPath }: Importer) => {
+        this.boxes[this.moduleIdxMap[importerPath]] && this.boxes[this.moduleIdxMap[modulePath]] &&
         this.connectors.push(
           new Connector(this.boxes[this.moduleIdxMap[importerPath]], this.boxes[this.moduleIdxMap[modulePath]])
         );
@@ -352,7 +421,7 @@ class Visualizer {
     objects.forEach(object => object.draw());
   }
 
-  findModule(predicate: (box: ModuleBox) => boolean) {
+  findModule(predicate: (box: ModuleBox) => boolean): ModuleBox | void {
     for (const box of this.boxes) {
       if (predicate(box)) {
         return box;
