@@ -139,6 +139,7 @@ class Visualizer {
       if (!importedPaths) return;
 
       const importedModules = Object.keys(modules).filter(path => importedPaths.includes(path));
+      const importedBoxes: ModuleBox[] = [clickedBox];
 
       // Create modules
       for (const modulePath of importedModules) {
@@ -159,10 +160,15 @@ class Visualizer {
             this.growCanvasHeight(nextRowStartY);
           }
         }
+
+        importedBoxes.push(moduleBox);
       }
 
       this.redrawBoxes();
-      this.drawConnectors(this.findAllModules(box => importedPaths.includes(box.moduleInfo.Path)).concat(clickedBox));
+      this.drawConnectors(importedBoxes);
+
+      // Highlight direct imports and draw connectors
+      importedBoxes.forEach(box => new Box(box.position, box.dimensions, { background: '#ff0' }).draw());
 
       this.detailSection.innerHTML = JSON.stringify(clickedBox.moduleInfo, null, 2)
         .replace(/ /g, '&nbsp;')
