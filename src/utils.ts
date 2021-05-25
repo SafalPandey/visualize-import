@@ -6,6 +6,12 @@ export function readFile(file: string) {
   return fs.readFileSync(file).toString();
 }
 
+export function readFileAsStream(file: string) {
+  console.log(`Reading file: ${file} as stream`);
+
+  return fs.createReadStream(file);
+}
+
 export function memoize(func: (...args: any[]) => any) {
   const retMap = new Map();
 
