@@ -1,7 +1,7 @@
 import path from 'path';
 import http from 'http';
 
-import { readFile, parseQuery, memoize } from '../utils';
+import { parseQuery, readFileAsStream } from '../utils';
 import { SERVER_PORT, HTML_SERVER_PORT } from '../constants';
 
 const basePath = path.join(__dirname, '..', '..');
@@ -15,19 +15,20 @@ export const FRONTEND_URL_TO_FILE_MAP: { [key: string]: string } = {
 
 export function createServer() {
   console.log('Creating HTTP server.');
-  const memoRead = memoize(readFile);
 
   const server = http.createServer((req, res) => {
     console.log('Got a request.');
-
     const filename = parseQuery(req.url).filename;
+
     console.log(`Responding with imports file: ${filename}`);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+    });
 
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-
-    res.end(memoRead(filename));
+    const stream = readFileAsStream(filename);
+    stream.pipe(res);
   });
 
   return server.listen(SERVER_PORT, () => {
@@ -48,12 +49,14 @@ export function createHtmlServer() {
     }
 
     console.log(`Responding with file: ${filename}`);
+    res.writeHead(200, {
+      'Content-Type': `text/${filename.split('.').pop()}`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+    });
 
-    res.setHeader('Content-Type', `text/${filename.split('.').pop()}`);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-
-    res.end(readFile(filename));
+    const stream = readFileAsStream(filename);
+    stream.pipe(res);
   });
 
   return server.listen(HTML_SERVER_PORT, () => {
